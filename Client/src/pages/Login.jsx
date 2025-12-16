@@ -102,15 +102,6 @@ function Login() {
           onSubmit={handleSubmit}
           className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100"
         >
-          {/* Error Message */}
-          {errors.submit && (
-            <div className="mb-5 p-4 bg-red-50 border border-red-200 rounded-lg">
-              <p className="text-red-600 text-sm font-medium">
-                {errors.submit}
-              </p>
-            </div>
-          )}
-
           {/* Username */}
           <div className="mb-5">
             <label
@@ -136,9 +127,6 @@ function Login() {
                 }`}
               />
             </div>
-            {errors.username && (
-              <p className="text-red-500 text-xs mt-1.5">{errors.username}</p>
-            )}
           </div>
 
           {/* Password */}
@@ -150,12 +138,6 @@ function Login() {
               >
                 Password
               </label>
-              <Link
-                to="/forgot-password"
-                className="text-xs text-blue-500 hover:text-blue-700 transition-colors"
-              >
-                Lupa password?
-              </Link>
             </div>
             <div className="relative">
               <Lock
@@ -181,24 +163,6 @@ function Login() {
                 {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
               </button>
             </div>
-            {errors.password && (
-              <p className="text-red-500 text-xs mt-1.5">{errors.password}</p>
-            )}
-          </div>
-
-          {/* Remember Me */}
-          <div className="mb-6 flex items-center">
-            <input
-              type="checkbox"
-              id="remember"
-              className="w-4 h-4 rounded border-gray-300 text-blue-500 focus:ring-2 focus:ring-blue-500 cursor-pointer"
-            />
-            <label
-              htmlFor="remember"
-              className="ml-2 text-sm text-gray-600 cursor-pointer"
-            >
-              Ingat saya
-            </label>
           </div>
 
           {/* Submit Button */}
