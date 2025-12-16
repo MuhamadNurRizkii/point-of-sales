@@ -11,10 +11,12 @@ export const loginController = async (req, res) => {
 export const registerController = async (req, res) => {
   try {
     const result = await registerService(req.body);
-    console.log(result);
+    console.log(result.statusCode);
 
-    res
+    return res
       .status(result.statusCode)
       .json({ success: result.success, message: result.message });
-  } catch (error) {}
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
 };

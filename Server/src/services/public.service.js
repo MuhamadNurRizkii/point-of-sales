@@ -76,7 +76,7 @@ const registerService = async (request) => {
     if (user.length > 0) {
       return {
         success: false,
-        satusCode: 400,
+        statusCode: 400,
         message: "Username sudah digunakan!",
       };
     }
@@ -97,7 +97,10 @@ const registerService = async (request) => {
 
     return { success: true, statusCode: 201, message: "Register berhasil" };
   } catch (error) {
-    console.log("Terjadi kesalahan: ", error);
+    return {
+      success: false,
+      message: "Terjadi kesalahan server",
+    };
   }
 };
 
