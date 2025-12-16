@@ -1,10 +1,14 @@
 import express from "express";
-import { loginController } from "../controllers/public.controllers";
+import {
+  loginController,
+  registerController,
+} from "../controllers/public.controllers";
 
 const Public = express.Router();
 
 // LOGIN
-Public.post("/login", loginController);
+Public.post("auth/login", loginController);
 // REGISTER
+Public.post("auth/login", registerController);
 
 export default Public;
