@@ -55,14 +55,16 @@ const loginService = async (request) => {
 const registerService = async (request) => {
   try {
     // validasi data input dari user
-    const { value, error } = registerSchema.validate(request);
+    const { value, error } = registerSchema.validate(request, {
+      abortEarly: false,
+    });
 
     if (error) {
-      res.status(400).json({
+      return {
         success: false,
+        satusCode: 400,
         message: error.details.map((detail) => detail.message),
-      });
-      return;
+      };
     }
 
     const { nama_depan, nama_belakang, username, password } = value;
@@ -71,12 +73,12 @@ const registerService = async (request) => {
     const [user] = await pool.query(sql, [username]);
 
     // jika ada kembalikan error 400
-    if (user) {
-      res.status(400).json({
+    if (user.length > 0) {
+      return {
         success: false,
-        message: error.details.map((detail) => detail.message),
-      });
-      return;
+        satusCode: 400,
+        message: "Username sudah digunakan!",
+      };
     }
 
     // jika tidak, hashing password
@@ -87,15 +89,13 @@ const registerService = async (request) => {
       "INSERT INTO users (nama_depan, nama_belakang, username, password) VALUES (?, ?, ?, ?)";
 
     await pool.query(newDataUser, [
-      nama_belakang,
+      nama_depan,
       nama_belakang,
       username,
       hashPassword,
     ]);
 
-    return res
-      .status(201)
-      .json({ success: true, message: "Register berhasil" });
+    return { success: true, statusCode: 201, message: "Register berhasil" };
   } catch (error) {
     console.log("Terjadi kesalahan: ", error);
   }
