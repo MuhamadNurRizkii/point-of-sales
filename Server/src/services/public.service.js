@@ -11,33 +11,38 @@ const loginService = async (request) => {
     const { value, error } = loginSchema.validate(request);
 
     if (error) {
-      res.status(400).json({
+      return {
         success: false,
+        statusCode: 400,
         message: error.details.map((detail) => detail.message),
-      });
-      return;
+      };
     }
 
     const { username, password } = value;
 
-    const sql = "SELECT * FROM users where username = ?";
+    const sql = "SELECT * FROM users WHERE username = ?";
 
     const [isUsername] = await pool.query(sql, [username]);
 
-    if (!isUsername) {
-      res
-        .status(400)
-        .json({ success: false, message: "username atau password salah!" });
-      return;
+    if (isUsername.length < 0) {
+      return {
+        success: false,
+        statusCode: 400,
+        message: "username atau password salah!",
+      };
     }
 
-    const comparePassword = await bcrypt.compare(password, isUsername.password);
+    const comparePassword = await bcrypt.compare(
+      password,
+      isUsername[0].password
+    );
 
     if (!comparePassword) {
-      res
-        .status(400)
-        .json({ success: false, message: "username atau password salah!" });
-      return;
+      return {
+        success: false,
+        statusCode: 400,
+        message: "username atau password salah!",
+      };
     }
 
     const accessToken = jwt.sign(
@@ -46,9 +51,14 @@ const loginService = async (request) => {
       { expiresIn: "7d" }
     );
 
-    res.json({ success: true, message: "login berhasil", token: accessToken });
+    return {
+      success: true,
+      statusCode: 200,
+      message: "login berhasil",
+      token: accessToken,
+    };
   } catch (error) {
-    console.log("Terjadi kesalahan: ", error);
+    return { success: false, message: "Terjadi kesalahan server!:" };
   }
 };
 
