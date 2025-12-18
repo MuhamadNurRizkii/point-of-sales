@@ -7,8 +7,8 @@ import {
 const Public = express.Router();
 
 // LOGIN
-Public.post("/auth/login", loginController);
+Public.post("/login", loginController);
 // REGISTER
-Public.post("/auth/register", registerController);
+Public.post("/register", registerController);
 
 export default Public;

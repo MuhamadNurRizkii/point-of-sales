@@ -8,8 +8,10 @@ import jwt from "jsonwebtoken";
 
 const loginService = async (request) => {
   try {
+    // validasi input dari user
     const { value, error } = loginSchema.validate(request);
 
+    // cek jika terjadi error
     if (error) {
       return {
         success: false,
@@ -18,12 +20,16 @@ const loginService = async (request) => {
       };
     }
 
+    // destructuring input user
     const { username, password } = value;
 
-    const sql = "SELECT * FROM users WHERE username = ?";
+    // query untuk mengambil data id, username, dan password berdasarkan input username user
+    const sql = "SELECT id, username, password FROM users WHERE username = ?";
 
+    // hasil query database
     const [isUsername] = await pool.query(sql, [username]);
 
+    // jika username tida ditemukan
     if (isUsername.length < 0) {
       return {
         success: false,
@@ -32,11 +38,13 @@ const loginService = async (request) => {
       };
     }
 
+    // bandingkan password
     const comparePassword = await bcrypt.compare(
       password,
       isUsername[0].password
     );
 
+    // jika password tidak sama
     if (!comparePassword) {
       return {
         success: false,
@@ -45,12 +53,14 @@ const loginService = async (request) => {
       };
     }
 
+    // bikin token
     const accessToken = jwt.sign(
       { id: isUsername.id },
       process.env.ACCESS_TOKEN,
       { expiresIn: "7d" }
     );
 
+    // kembalikan hasilnya jika semau proses berhasil
     return {
       success: true,
       statusCode: 200,
@@ -58,6 +68,7 @@ const loginService = async (request) => {
       token: accessToken,
     };
   } catch (error) {
+    // kembalikan pesan error jika terjadi error
     return { success: false, message: "Terjadi kesalahan server!:" };
   }
 };
