@@ -1,9 +1,22 @@
-import cloudinary from "cloudinary";
+import { v2 as cloudinary } from "cloudinary";
 
-cloudinary.v2.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.API_KEY,
-  api_secret: process.env.API_SECRET,
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export default cloudinary;
+const uploadFile = (fileBuffer) => {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: "products" },
+      (err, result) => {
+        if (err) reject(err);
+        else resolve(result);
+      }
+    );
+    stream.end(fileBuffer);
+  });
+};
+
+export default uploadFile;

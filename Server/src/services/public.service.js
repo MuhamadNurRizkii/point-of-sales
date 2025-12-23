@@ -30,7 +30,7 @@ const loginService = async (request) => {
     const [isUsername] = await pool.query(sql, [username]);
 
     // jika username tida ditemukan
-    if (isUsername.length < 0) {
+    if (isUsername.length === 0) {
       return {
         success: false,
         statusCode: 400,
@@ -60,7 +60,7 @@ const loginService = async (request) => {
       { expiresIn: "7d" }
     );
 
-    // kembalikan hasilnya jika semau proses berhasil
+    // kembalikan hasilnya jika semua proses berhasil
     return {
       success: true,
       statusCode: 200,
@@ -69,7 +69,11 @@ const loginService = async (request) => {
     };
   } catch (error) {
     // kembalikan pesan error jika terjadi error
-    return { success: false, message: "Terjadi kesalahan server!:" };
+    return {
+      success: false,
+      statusCode: 500,
+      message: `Terjadi kesalahan server`,
+    };
   }
 };
 
@@ -120,7 +124,8 @@ const registerService = async (request) => {
   } catch (error) {
     return {
       success: false,
-      message: "Terjadi kesalahan server",
+      statusCode: 500,
+      message: `Terjadi kesalahan server`,
     };
   }
 };
