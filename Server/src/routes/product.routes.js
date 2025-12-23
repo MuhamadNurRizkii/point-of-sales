@@ -1,5 +1,8 @@
 import express from "express";
-import { addProductController } from "../controllers/products.controller.js";
+import {
+  addProductController,
+  getAllProducts,
+} from "../controllers/products.controller.js";
 import { upload } from "../middleware/multer.js";
 
 const Product = express.Router();
@@ -10,5 +13,7 @@ Product.post(
   upload.single("image"),
   addProductController
 );
+
+Product.get("/dashboard/products", getAllProducts);
 
 export default Product;

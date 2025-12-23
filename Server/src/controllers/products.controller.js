@@ -1,4 +1,7 @@
-import { createProductService } from "../services/products.service.js";
+import {
+  createProductService,
+  getAllProductsService,
+} from "../services/products.service.js";
 
 export const addProductController = async (req, res) => {
   try {
@@ -16,6 +19,19 @@ export const addProductController = async (req, res) => {
     res
       .status(result.statusCode)
       .json({ success: result.success, message: result.message });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const getAllProducts = async (req, res) => {
+  try {
+    const result = await getAllProductsService(req.query.page, req.query.limit);
+    res.status(result.statusCode).json({
+      success: result.statusCode,
+      message: result.message,
+      paging: result.paging,
+    });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }

@@ -54,3 +54,40 @@ export const createProductService = async (request, file) => {
     };
   }
 };
+
+export const getAllProductsService = async (queryPage, queryLimit) => {
+  try {
+    const page = parseInt(queryPage) || 1;
+    const limit = parseInt(queryLimit) || 6;
+    const offset = (page - 1) * limit;
+
+    const [countProducts] = await pool.query(
+      "SELECT COUNT(*) as total FROM products"
+    );
+    const totalData = countProducts[0].total;
+    const totalPages = Math.ceil(totalData / limit);
+
+    const [result] = await pool.query(
+      `SELECT * FROM products LIMIT ? OFFSET ?`,
+      [limit, offset]
+    );
+
+    return {
+      success: true,
+      statusCode: 200,
+      message: "Data berhasil diambil",
+      paging: {
+        currentPage: page,
+        totalData,
+        totalPages,
+        data: result,
+      },
+    };
+  } catch (error) {
+    return {
+      success: false,
+      statusCode: 500,
+      message: `Terjadi kesalahan server`,
+    };
+  }
+};
