@@ -7,6 +7,7 @@ import Register from "../src/pages/Register";
 import DashboardLayout from "./Layout/DashboardLayout";
 import Dashboard from "./pages/Dashboard";
 import Products from "./pages/Products";
+import EditProduct from "./pages/EditProduct";
 import Transaction from "./pages/Transaction";
 import Report from "./pages/Report";
 import { Toaster } from "react-hot-toast";
@@ -28,6 +29,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="products" element={<Products />} />
+          <Route path="products/edit/:id" element={<EditProduct />} />
           <Route path="products/add" element={<CreateProducts />} />
           <Route path="transactions" element={<Transaction />} />
           <Route path="report" element={<Report />} />

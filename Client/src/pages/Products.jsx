@@ -181,10 +181,13 @@ const Products = () => {
 
                 {/* Action Buttons */}
                 <div className="flex gap-3">
-                  <button className="flex-1 flex items-center justify-center gap-2 bg-blue-50 text-blue-600 hover:bg-blue-100 py-2.5 rounded-lg font-medium transition-all duration-200">
+                  <Link
+                    to={`/dashboard/products/edit/${product.id}`}
+                    className="flex-1 flex items-center justify-center gap-2 bg-blue-50 text-blue-600 hover:bg-blue-100 py-2.5 rounded-lg font-medium transition-all duration-200"
+                  >
                     <Edit2 size={16} />
                     Edit
-                  </button>
+                  </Link>
                   <button className="flex-1 flex items-center justify-center gap-2 bg-red-50 text-red-600 hover:bg-red-100 py-2.5 rounded-lg font-medium transition-all duration-200">
                     <Trash2 size={16} />
                     Hapus

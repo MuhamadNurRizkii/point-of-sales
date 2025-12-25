@@ -21,4 +21,13 @@ const getProductsAPI = async (page, limit) => {
   });
 };
 
-export { createProductAPI, getProductsAPI };
+const getProductById = async (id) => {
+  return await fetch(`${url}/dashboard/products/${id}`, {
+    method: "GET",
+    headers: {
+      "Content-type": "application/json",
+    },
+  });
+};
+
+export { createProductAPI, getProductsAPI, getProductById };
