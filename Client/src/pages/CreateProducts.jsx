@@ -17,7 +17,7 @@ const CreateProducts = () => {
   const [name, setName] = useState("");
   const [price, setPrice] = useState(0);
   const [stock, setStock] = useState(0);
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState("makanan");
   const [image, setImage] = useState(null);
 
   const [preview, setPreview] = useState(null);
@@ -73,7 +73,6 @@ const CreateProducts = () => {
     setImage(null);
     setPreview(null);
   };
-  console.log(image);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -83,7 +82,7 @@ const CreateProducts = () => {
     formData.append("price", price);
     formData.append("stock", stock);
     formData.append("category", category);
-    formData.append("image", image.gambar);
+    formData.append("image", image);
 
     setIsLoading(true);
     // Simulate API call

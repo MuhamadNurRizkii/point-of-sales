@@ -6,11 +6,11 @@ import {
 export const addProductController = async (req, res) => {
   try {
     // destructuring input user
-    const { name, price, stock } = req.body;
+    const { name, price, stock, category } = req.body;
 
     // variabel untuk menyimpan hasil createProduct
     const result = await createProductService(
-      { name, price: Number(price), stock: Number(stock) },
+      { name, price: Number(price), stock: Number(stock), category },
       req.file
     );
     console.log(result);

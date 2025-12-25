@@ -19,7 +19,7 @@ export const createProductService = async (request, file) => {
     const image = file;
 
     // desctructuring input user
-    const { name, price, stock } = value;
+    const { name, price, stock, category } = value;
 
     // validasi jika gambar tidak ada
     if (!image) {
@@ -35,10 +35,16 @@ export const createProductService = async (request, file) => {
 
     // query untuk menambahkan product ke database
     const sql =
-      "INSERT INTO products (name, price, stock, image_url) VALUES (?, ?, ?, ?);";
+      "INSERT INTO products (name, price, stock, category, image_url) VALUES (?, ?, ?, ?, ?);";
 
     // eksekusi query
-    await pool.query(sql, [name, price, stock, uploadResult.secure_url]);
+    await pool.query(sql, [
+      name,
+      price,
+      stock,
+      category,
+      uploadResult.secure_url,
+    ]);
 
     // kirim respon ke controller
     return {

@@ -16,12 +16,6 @@ function Login() {
 
   const navigate = useNavigate();
 
-  // Demo credentials
-  const demoData = {
-    username: "rizuka",
-    password: "admin123",
-  };
-
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -35,19 +29,6 @@ function Login() {
         [name]: "",
       }));
     }
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-
-    if (!formData.username.trim()) {
-      newErrors.username = "Username harus diisi";
-    }
-    if (!formData.password) {
-      newErrors.password = "Password harus diisi";
-    }
-
-    return newErrors;
   };
 
   const handleSubmit = async (e) => {
@@ -115,6 +96,8 @@ function Login() {
                 name="username"
                 value={formData.username}
                 onChange={handleChange}
+                required
+                autoComplete="off"
                 placeholder="Masukkan username Anda"
                 className={`w-full pl-10 pr-4 py-2.5 rounded-lg border transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                   errors.username ? "border-red-500" : "border-gray-200"
@@ -144,6 +127,8 @@ function Login() {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
+                required
+                autoComplete="off"
                 placeholder="Masukkan password Anda"
                 className={`w-full pl-10 pr-10 py-2.5 rounded-lg border transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
                   errors.password ? "border-red-500" : "border-gray-200"
@@ -180,19 +165,6 @@ function Login() {
             </Link>
           </p>
         </form>
-
-        {/* Demo Info */}
-        <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-xs text-blue-700 font-semibold mb-2">
-            Demo Credentials:
-          </p>
-          <p className="text-xs text-blue-600">
-            Username: <span className="font-mono">rizuka</span>
-          </p>
-          <p className="text-xs text-blue-600">
-            Password: <span className="font-mono">admin123</span>
-          </p>
-        </div>
 
         {/* Footer */}
         <p className="text-center text-gray-500 text-xs mt-6">
