@@ -16,6 +16,25 @@ function Login() {
 
   const navigate = useNavigate();
 
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (!formData.username.trim()) {
+      newErrors.username = "Username harus diisi";
+    }
+    if (formData.username.length < 3) {
+      newErrors.username = "Username minimal 3 karakter";
+    }
+    if (!formData.password) {
+      newErrors.password = "Password harus diisi";
+    }
+    if (formData.password.length < 6) {
+      newErrors.password = "Password minimal 6 karakter";
+    }
+
+    return newErrors;
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -33,6 +52,13 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const newErrors = validateForm();
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
 
     const response = await loginAPI(formData.username, formData.password);
     const responseBody = await response.json();
@@ -96,7 +122,6 @@ function Login() {
                 name="username"
                 value={formData.username}
                 onChange={handleChange}
-                required
                 autoComplete="off"
                 placeholder="Masukkan username Anda"
                 className={`w-full pl-10 pr-4 py-2.5 rounded-lg border transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
@@ -104,6 +129,9 @@ function Login() {
                 }`}
               />
             </div>
+            {errors.username && (
+              <p className="text-red-500 text-xs mt-1.5">{errors.username}</p>
+            )}
           </div>
 
           {/* Password */}
@@ -127,7 +155,6 @@ function Login() {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                required
                 autoComplete="off"
                 placeholder="Masukkan password Anda"
                 className={`w-full pl-10 pr-10 py-2.5 rounded-lg border transition-all focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
@@ -142,6 +169,9 @@ function Login() {
                 {showPassword ? <Eye size={20} /> : <EyeOff size={20} />}
               </button>
             </div>
+            {errors.password && (
+              <p className="text-red-500 text-xs mt-1.5">{errors.password}</p>
+            )}
           </div>
 
           {/* Submit Button */}
