@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { Eye, EyeOff, Mail, Lock, ArrowRight } from "lucide-react";
+import { loginAPI } from "../api/public";
+import toast from "react-hot-toast";
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -48,32 +50,24 @@ function Login() {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const newErrors = validateForm();
 
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
+    const response = await loginAPI(formData.username, formData.password);
+    const responseBody = await response.json();
+    console.log(responseBody);
+
+    if (response.status === 200) {
+      setIsLoading(true);
+      toast.success(responseBody.message);
+      // Simulate API call
+      setTimeout(() => {
+        setIsLoading(false);
+        navigate("/dashboard");
+      }, 1000);
+    } else {
+      toast.error(responseBody.message);
     }
-
-    // Check credentials
-    if (
-      formData.username !== demoData.username ||
-      formData.password !== demoData.password
-    ) {
-      setErrors({
-        submit: "Username atau password salah",
-      });
-      return;
-    }
-
-    setIsLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      navigate("/dashboard");
-    }, 1000);
   };
 
   return (

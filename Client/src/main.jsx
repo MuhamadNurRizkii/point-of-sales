@@ -9,10 +9,13 @@ import Dashboard from "./pages/Dashboard";
 import Products from "./pages/Products";
 import Transaction from "./pages/Transaction";
 import Report from "./pages/Report";
+import { Toaster } from "react-hot-toast";
+import CreateProducts from "./pages/CreateProducts";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter>
+      <Toaster />
       <Routes>
         {/* Auth */}
         <Route>
@@ -25,6 +28,7 @@ createRoot(document.getElementById("root")).render(
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="products" element={<Products />} />
+          <Route path="products/add" element={<CreateProducts />} />
           <Route path="transactions" element={<Transaction />} />
           <Route path="report" element={<Report />} />
           <Route />

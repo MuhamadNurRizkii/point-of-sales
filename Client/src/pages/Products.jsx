@@ -1,62 +1,21 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router";
 import { Plus, Search, Edit2, Trash2, ChevronDown } from "lucide-react";
+import { getProductsAPI } from "../api/products";
+import toast from "react-hot-toast";
 
 const Products = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
+  const [loading, setLoading] = useState(true);
 
-  const [products, setProducts] = useState([
-    {
-      id: 1,
-      name: "Laptop Gaming",
-      category: "Electronics",
-      price: 12500000,
-      stock: 15,
-      image: "https://via.placeholder.com/400x300?text=Laptop",
-    },
-    {
-      id: 2,
-      name: "Wireless Mouse",
-      category: "Accessories",
-      price: 250000,
-      stock: 45,
-      image: "https://via.placeholder.com/400x300?text=Mouse",
-    },
-    {
-      id: 3,
-      name: "USB-C Cable",
-      category: "Accessories",
-      price: 75000,
-      stock: 120,
-      image: "https://via.placeholder.com/400x300?text=Cable",
-    },
-    {
-      id: 4,
-      name: "Mechanical Keyboard",
-      category: "Electronics",
-      price: 1500000,
-      stock: 8,
-      image: "https://via.placeholder.com/400x300?text=Keyboard",
-    },
-    {
-      id: 5,
-      name: "Monitor 27 Inch",
-      category: "Electronics",
-      price: 3200000,
-      stock: 12,
-      image: "https://via.placeholder.com/400x300?text=Monitor",
-    },
-    {
-      id: 6,
-      name: "Webcam HD",
-      category: "Accessories",
-      price: 500000,
-      stock: 32,
-      image: "https://via.placeholder.com/400x300?text=Webcam",
-    },
-  ]);
+  const [products, setProducts] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = parseInt(searchParams.get("page") || 1);
+  const limit = 6;
 
-  const categories = ["all", "Electronics", "Accessories"];
+  const categories = ["all", "makanan", "minuman", "lain-lain"];
   const filteredProducts = products.filter((product) => {
     const matchesSearch = product.name
       .toLowerCase()
@@ -74,6 +33,36 @@ const Products = () => {
     }).format(price);
   };
 
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+
+      const response = await getProductsAPI(page, limit);
+      const responseBody = await response.json();
+
+      if (responseBody.success) {
+        setProducts(responseBody.paging.data);
+        setTotalPages(responseBody.paging.totalPages || 1);
+      } else {
+        toast.error(responseBody.message);
+      }
+    } catch (error) {
+      console.log("Gagal mengambil data: ", error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, [page]);
+
+  const goToPage = (pageNumber) => {
+    setSearchParams({ page: pageNumber });
+  };
+
+  console.log(products);
+
   return (
     <div className="w-full overflow-hidden">
       {/* Header dengan Button Tambah */}
@@ -84,10 +73,13 @@ const Products = () => {
             Total {filteredProducts.length} produk
           </p>
         </div>
-        <button className="flex items-center gap-2 bg-linear-to-r from-blue-500 to-purple-500 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all duration-200 font-medium">
+        <Link
+          to={"/dashboard/products/add"}
+          className="flex items-center gap-2 bg-linear-to-r from-blue-500 to-purple-500 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all duration-200 font-medium"
+        >
           <Plus size={20} />
           Tambah Produk
-        </button>
+        </Link>
       </div>
 
       {/* Search dan Filter */}
@@ -135,9 +127,9 @@ const Products = () => {
               {/* Image Container */}
               <div className="relative overflow-hidden h-48 bg-gray-200">
                 <img
-                  src={product.image}
+                  src={product.image_url}
                   alt={product.name}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  className="w-full  object-cover group-hover:scale-110 transition-transform duration-300"
                 />
                 <div className="absolute top-3 right-3">
                   <span className="bg-linear-to-r from-blue-500 to-purple-500 text-white text-xs font-bold px-3 py-1 rounded-full">
@@ -213,6 +205,54 @@ const Products = () => {
           </p>
         </div>
       )}
+
+      {/* Button Pagination */}
+      <div className="flex justify-center mt-8">
+        <div className="flex items-center gap-2 bg-white dark:bg-gray-800 p-2 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
+          {/* Prev Button */}
+          <button
+            disabled={page === 1}
+            onClick={() => goToPage(page - 1)}
+            className={`px-4 py-2 rounded-md font-medium transition-all duration-200 ${
+              page === 1
+                ? "bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed"
+                : "bg-linear-to-r from-blue-500 to-purple-500 text-white hover:shadow-lg hover:scale-105"
+            }`}
+          >
+            ← Prev
+          </button>
+
+          {/* Numbered Pages */}
+          <div className="flex gap-1">
+            {Array.from({ length: totalPages }, (_, i) => (
+              <button
+                key={i}
+                onClick={() => goToPage(i + 1)}
+                className={`px-3 py-2 rounded-md font-medium transition-all duration-200 ${
+                  page === i + 1
+                    ? "bg-linear-to-r from-blue-500 to-purple-500 text-white shadow-md"
+                    : "bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600"
+                }`}
+              >
+                {i + 1}
+              </button>
+            ))}
+          </div>
+
+          {/* Next Button */}
+          <button
+            disabled={page === totalPages}
+            onClick={() => goToPage(page + 1)}
+            className={`px-4 py-2 rounded-md font-medium transition-all duration-200 ${
+              page === totalPages
+                ? "bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed"
+                : "bg-linear-to-r from-blue-500 to-purple-500 text-white hover:shadow-lg hover:scale-105"
+            }`}
+          >
+            Next →
+          </button>
+        </div>
+      </div>
     </div>
   );
 };
