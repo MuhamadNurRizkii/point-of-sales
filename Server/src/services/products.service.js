@@ -33,9 +33,11 @@ export const createProductService = async (request, file) => {
     // variabel untuk menyimpan hasil upload gambar ke cloudinary
     const uploadResult = await uploadFile(image.buffer);
 
+    console.log(uploadResult);
+
     // query untuk menambahkan product ke database
     const sql =
-      "INSERT INTO products (name, price, stock, category, image_url) VALUES (?, ?, ?, ?, ?);";
+      "INSERT INTO products (name, price, stock, category, public_id, image_url) VALUES (?, ?, ?, ?, ?, ?);";
 
     // eksekusi query
     await pool.query(sql, [
@@ -43,6 +45,7 @@ export const createProductService = async (request, file) => {
       price,
       stock,
       category,
+      uploadResult.public_id,
       uploadResult.secure_url,
     ]);
 

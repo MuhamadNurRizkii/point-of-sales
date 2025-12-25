@@ -12,7 +12,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { createProductAPI, getProductById } from "../api/products";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 
 const EditProduct = () => {
   const [name, setName] = useState("");
@@ -22,6 +22,7 @@ const EditProduct = () => {
   const [image, setImage] = useState(null);
 
   const params = useParams();
+  const navigate = useNavigate();
   const [preview, setPreview] = useState(null);
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -314,6 +315,7 @@ const EditProduct = () => {
           <div className="flex gap-3 mt-8 pt-6 border-t border-gray-100">
             <button
               type="button"
+              onClick={() => navigate("/dashboard/products")}
               className="flex-1 px-6 py-3 rounded-lg border border-gray-200 text-gray-700 font-semibold hover:bg-gray-50 transition-all"
             >
               Batal
@@ -323,7 +325,7 @@ const EditProduct = () => {
               disabled={isLoading}
               className="flex-1 bg-linear-to-r from-blue-500 to-purple-500 text-white font-semibold py-3 rounded-lg hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? "Menambahkan..." : "Tambah Produk"}
+              {isLoading ? "Mengedit..." : "Edit Produk"}
               {!isLoading && <ArrowRight size={20} />}
             </button>
           </div>
