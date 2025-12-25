@@ -97,3 +97,39 @@ export const getAllProductsService = async (queryPage, queryLimit) => {
     };
   }
 };
+
+export const getProductByIdService = async (id) => {
+  try {
+    if (!id) {
+      return {
+        success: false,
+        statusCode: 404,
+        message: "Id tidak ditemukan!",
+      };
+    }
+
+    const getProductByIdQuery = "SELECT * FROM products where id = ?";
+    const [result] = await pool.query(getProductByIdQuery, [id]);
+
+    if (result.length === 0) {
+      return {
+        success: true,
+        statusCode: 404,
+        message: "Product tidak ditemukan",
+      };
+    }
+
+    return {
+      success: true,
+      statusCode: 200,
+      message: "Data berhasil diambil!",
+      data: result,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      statusCode: 500,
+      message: `Terjadi kesalahan server`,
+    };
+  }
+};
