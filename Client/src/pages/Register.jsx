@@ -1,6 +1,16 @@
 import React, { useState } from "react";
-import { Link } from "react-router";
-import { Eye, EyeOff, User, Mail, Lock, ArrowRight } from "lucide-react";
+import { Link, useNavigate } from "react-router";
+import {
+  Eye,
+  EyeOff,
+  User,
+  Mail,
+  Lock,
+  ArrowRight,
+  AwardIcon,
+} from "lucide-react";
+import { registerAPI } from "../api/public";
+import toast from "react-hot-toast";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -11,6 +21,8 @@ const Register = () => {
     confirmPassword: "",
   });
 
+  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [errors, setErrors] = useState({});
@@ -61,7 +73,7 @@ const Register = () => {
     return newErrors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const newErrors = validateForm();
 
@@ -73,6 +85,27 @@ const Register = () => {
     // Submit form
     console.log("Form submitted:", formData);
     // Add your registration logic here
+
+    const response = await registerAPI(
+      formData.firstName,
+      formData.lastName,
+      formData.username,
+      formData.password
+    );
+    const responseBody = await response.json();
+    console.log(responseBody);
+
+    if (responseBody.success) {
+      setIsLoading(true);
+      toast.success(responseBody.message);
+
+      setTimeout(() => {
+        setIsLoading(false);
+        navigate("/login");
+      }, 1000);
+    } else {
+      toast.error(responseBody.message);
+    }
   };
 
   return (
@@ -270,10 +303,11 @@ const Register = () => {
           {/* Submit Button */}
           <button
             type="submit"
+            disabled={isLoading}
             className="w-full bg-linear-to-r from-blue-500 to-purple-500 text-white font-semibold py-3 rounded-lg hover:shadow-lg transition-all duration-200 flex items-center justify-center gap-2 mb-4"
           >
-            Buat Akun
-            <ArrowRight size={20} />
+            {isLoading ? "Loading..." : "Daftar"}
+            {!isLoading && <ArrowRight size={20} />}
           </button>
 
           {/* Login Link */}
