@@ -1,5 +1,6 @@
 import {
   createProductService,
+  editProductByIdService,
   getAllProductsService,
   getProductByIdService,
 } from "../services/products.service.js";
@@ -49,5 +50,30 @@ export const getProductById = async (req, res) => {
     });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const editProductById = async (req, res) => {
+  try {
+    const { name, price, stock, category } = req.body;
+    const { id } = req.params;
+    const file = req.file;
+
+    const result = await editProductByIdService(
+      {
+        name,
+        price: Number(price),
+        stock: Number(stock),
+        category,
+      },
+      file,
+      id
+    );
+
+    res
+      .status(result.statusCode)
+      .json({ success: result.success, message: result.message });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 };

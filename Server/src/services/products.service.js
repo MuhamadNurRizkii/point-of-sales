@@ -1,6 +1,9 @@
 import pool from "../db/database.js";
-import uploadFile from "../utils/cloudinary.js";
-import { createProductSchema } from "../validations/product.validation.js";
+import { uploadFile, deleteFile } from "../utils/cloudinary.js";
+import {
+  createProductSchema,
+  editProductSchema,
+} from "../validations/product.validation.js";
 
 export const createProductService = async (request, file) => {
   try {
@@ -32,8 +35,6 @@ export const createProductService = async (request, file) => {
 
     // variabel untuk menyimpan hasil upload gambar ke cloudinary
     const uploadResult = await uploadFile(image.buffer);
-
-    console.log(uploadResult);
 
     // query untuk menambahkan product ke database
     const sql =
@@ -133,6 +134,84 @@ export const getProductByIdService = async (id) => {
       success: false,
       statusCode: 500,
       message: `Terjadi kesalahan server`,
+    };
+  }
+};
+
+export const editProductByIdService = async (request, file, id) => {
+  try {
+    // validasi input user
+    const { value, error } = editProductSchema.validate(request);
+
+    // validasi jika terjadi error
+    if (error) {
+      return {
+        success: false,
+        statusCode: 400,
+        message: error.details.map((err) => err.message),
+      };
+    }
+
+    // destructuirng
+    const { name, price, stock, category } = value;
+    // variabel menyimpan data gambar
+    const image = file;
+
+    // validasi jika gambar tidak ada
+    if (!image) {
+      return {
+        success: false,
+        statusCode: 400,
+        message: "Gambar tidak ditemukan!",
+      };
+    }
+
+    // ambil data lama berdasarkan id
+    const existingProduct = "SELECT * FROM products WHERE id = ?";
+    const [result] = await pool.query(existingProduct, [id]);
+
+    // validasi jika data tidak ditemukan!
+    if (result.length === 0) {
+      return {
+        success: false,
+        statusbar: 404,
+        message: "Product tidak ditemukan!",
+      };
+    }
+
+    // tambah gambar baru
+    const uploadResult = await uploadFile(image.buffer);
+
+    // hapus data lama
+    if (result.public_id) {
+      await deleteFile(result.public_id);
+    }
+
+    // masukkan data baru
+    const newDataProduct =
+      "UPDATE products SET name = ?, price = ?, stock = ?, category = ?, public_id = ?, image_url = ? WHERE id = ?";
+
+    // update data
+    await pool.query(newDataProduct, [
+      name,
+      price,
+      stock,
+      category,
+      uploadResult.public_id,
+      uploadResult.secure_url,
+      id,
+    ]);
+
+    return {
+      success: true,
+      statusCode: 201,
+      message: "Product berhasil diperbarui!",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      statusCode: 500,
+      message: `Terjadi kesalahan server!: ${error.message}`,
     };
   }
 };

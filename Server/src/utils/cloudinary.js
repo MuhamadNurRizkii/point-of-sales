@@ -19,4 +19,8 @@ const uploadFile = (fileBuffer) => {
   });
 };
 
-export default uploadFile;
+const deleteFile = (publicId) => {
+  return cloudinary.uploader.destroy(publicId);
+};
+
+export { uploadFile, deleteFile };
