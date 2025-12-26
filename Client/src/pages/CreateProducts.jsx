@@ -12,6 +12,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { createProductAPI } from "../api/products";
+import { useNavigate } from "react-router";
 
 const CreateProducts = () => {
   const [name, setName] = useState("");
@@ -20,6 +21,7 @@ const CreateProducts = () => {
   const [category, setCategory] = useState("makanan");
   const [image, setImage] = useState(null);
 
+  const navigate = useNavigate();
   const [preview, setPreview] = useState(null);
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -286,6 +288,7 @@ const CreateProducts = () => {
           {/* Buttons */}
           <div className="flex gap-3 mt-8 pt-6 border-t border-gray-100">
             <button
+              onClick={() => navigate("/dashboard/products")}
               type="button"
               className="flex-1 px-6 py-3 rounded-lg border border-gray-200 text-gray-700 font-semibold hover:bg-gray-50 transition-all"
             >
