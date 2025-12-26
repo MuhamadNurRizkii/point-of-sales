@@ -61,8 +61,6 @@ const Products = () => {
     setSearchParams({ page: pageNumber });
   };
 
-  console.log(products);
-
   return (
     <div className="w-full overflow-hidden">
       {/* Header dengan Button Tambah */}

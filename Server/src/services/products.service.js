@@ -139,79 +139,80 @@ export const getProductByIdService = async (id) => {
 };
 
 export const editProductByIdService = async (request, file, id) => {
+  // 1. Validasi Input di awal
+  const { value, error } = editProductSchema.validate(request);
+  if (error) {
+    return {
+      success: false,
+      statusCode: 400,
+      message: error.details.map((err) => err.message),
+    };
+  }
+
+  const { name, price, stock, category } = value;
+
+  // Gunakan connection dari pool untuk Transaction
+  const connection = await pool.getConnection();
+
   try {
-    // validasi input user
-    const { value, error } = editProductSchema.validate(request);
+    await connection.beginTransaction();
 
-    // validasi jika terjadi error
-    if (error) {
+    // 2. Cek eksistensi produk
+    const [existing] = await connection.query(
+      "SELECT * FROM products WHERE id = ?",
+      [id]
+    );
+    if (existing.length === 0) {
       return {
         success: false,
-        statusCode: 400,
-        message: error.details.map((err) => err.message),
-      };
-    }
-
-    // destructuirng
-    const { name, price, stock, category } = value;
-    // variabel menyimpan data gambar
-    const image = file;
-
-    // validasi jika gambar tidak ada
-    if (!image) {
-      return {
-        success: false,
-        statusCode: 400,
-        message: "Gambar tidak ditemukan!",
-      };
-    }
-
-    // ambil data lama berdasarkan id
-    const existingProduct = "SELECT * FROM products WHERE id = ?";
-    const [result] = await pool.query(existingProduct, [id]);
-
-    // validasi jika data tidak ditemukan!
-    if (result.length === 0) {
-      return {
-        success: false,
-        statusbar: 404,
+        statusCode: 404,
         message: "Product tidak ditemukan!",
       };
     }
 
-    // tambah gambar baru
-    const uploadResult = await uploadFile(image.buffer);
+    const oldPublicId = existing[0].public_id;
+    let updateFields = [name, price, stock, category];
+    let query =
+      "UPDATE products SET name = ?, price = ?, stock = ?, category = ?";
 
-    // hapus data lama
-    if (result.public_id) {
-      await deleteFile(result.public_id);
+    // 3. Logika Gambar (Opsional: Hanya upload jika ada file baru)
+    if (file) {
+      const uploadResult = await uploadFile(file.buffer);
+      query += ", public_id = ?, image_url = ?";
+      updateFields.push(uploadResult.public_id, uploadResult.secure_url);
     }
 
-    // masukkan data baru
-    const newDataProduct =
-      "UPDATE products SET name = ?, price = ?, stock = ?, category = ?, public_id = ?, image_url = ? WHERE id = ?";
+    query += " WHERE id = ?";
+    updateFields.push(id);
 
-    // update data
-    await pool.query(newDataProduct, [
-      name,
-      price,
-      stock,
-      category,
-      uploadResult.public_id,
-      uploadResult.secure_url,
-      id,
-    ]);
+    // 4. Update Database
+    await connection.query(query, updateFields);
+
+    // 5. Commit Transaksi
+    await connection.commit();
+
+    // 6. Hapus file lama di Cloudinary SETELAH DB sukses (Cleanup)
+    if (file && oldPublicId) {
+      // Tidak perlu await jika tidak ingin menghambat response user,
+      // tapi disarankan await agar folder Cloudinary tetap bersih.
+      await deleteFile(oldPublicId).catch((err) =>
+        console.error("Cloudinary Cleanup Error:", err)
+      );
+    }
 
     return {
       success: true,
-      statusCode: 201,
+      statusCode: 200,
       message: "Product berhasil diperbarui!",
     };
   } catch (error) {
+    await connection.rollback(); // Batalkan perubahan DB jika ada error
     return {
       success: false,
       statusCode: 500,
-      message: `Terjadi kesalahan server!: ${error.message}`,
+      message: `Server Error: ${error.message}`,
     };
+  } finally {
+    connection.release(); // Kembalikan koneksi ke pool
   }
 };

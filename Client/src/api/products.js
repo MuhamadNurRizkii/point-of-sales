@@ -30,4 +30,11 @@ const getProductById = async (id) => {
   });
 };
 
-export { createProductAPI, getProductsAPI, getProductById };
+const editProductByIdAPI = async (formData, id) => {
+  return await fetch(`${url}/dashboard/products/edit/${id}`, {
+    method: "PUT",
+    body: formData,
+  });
+};
+
+export { createProductAPI, getProductsAPI, getProductById, editProductByIdAPI };

@@ -11,7 +11,11 @@ import {
   ArrowRight,
   ChevronDown,
 } from "lucide-react";
-import { createProductAPI, getProductById } from "../api/products";
+import {
+  createProductAPI,
+  editProductByIdAPI,
+  getProductById,
+} from "../api/products";
 import { useNavigate, useParams } from "react-router";
 
 const EditProduct = () => {
@@ -27,16 +31,17 @@ const EditProduct = () => {
   const [errors, setErrors] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
+  console.log(image);
+
   const categories = [
     { value: "makanan", label: "Makanan" },
     { value: "minuman", label: "Minuman" },
     { value: "lain-lain", label: "Lain-lain" },
   ];
-
+  // fetch product
   const fetchProduct = async () => {
     const response = await getProductById(params.id);
     const { success, message, data } = await response.json();
-    console.log(data[0].name);
 
     if (success) {
       setName(data[0].name);
@@ -110,7 +115,7 @@ const EditProduct = () => {
     setIsLoading(true);
     // Simulate API call
 
-    const response = await createProductAPI(formData);
+    const response = await editProductByIdAPI(formData, params.id);
     const responseBody = await response.json();
 
     if (responseBody.success) {

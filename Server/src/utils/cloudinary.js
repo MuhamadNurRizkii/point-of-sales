@@ -19,8 +19,13 @@ const uploadFile = (fileBuffer) => {
   });
 };
 
-const deleteFile = (publicId) => {
-  return cloudinary.uploader.destroy(publicId);
+const deleteFile = async (publicId) => {
+  try {
+    const result = cloudinary.uploader.destroy(publicId);
+    return result;
+  } catch (error) {
+    console.log("Gagal menghapus file", error);
+  }
 };
 
 export { uploadFile, deleteFile };
