@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router";
 import { Plus, Search, Edit2, Trash2, ChevronDown } from "lucide-react";
-import { getProductsAPI } from "../api/products";
+import { deleteProductByIdAPI, getProductsAPI } from "../api/products";
 import toast from "react-hot-toast";
+import { alertConfirm } from "../utils/alert";
 
 const Products = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -59,6 +60,31 @@ const Products = () => {
 
   const goToPage = (pageNumber) => {
     setSearchParams({ page: pageNumber });
+  };
+
+  // handle delete button
+  const handleDelete = async (id) => {
+    try {
+      const isConfirm = await alertConfirm();
+      console.log(isConfirm);
+
+      if (isConfirm.isConfirmed === false) {
+        return;
+      }
+
+      const response = await deleteProductByIdAPI(id);
+      const responseBody = await response.json();
+      console.log(responseBody);
+
+      if (responseBody.success) {
+        toast.success(responseBody.message);
+        await fetchProducts();
+      } else {
+        toast.error(responseBody.message);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -186,7 +212,10 @@ const Products = () => {
                     <Edit2 size={16} />
                     Edit
                   </Link>
-                  <button className="flex-1 flex items-center justify-center gap-2 bg-red-50 text-red-600 hover:bg-red-100 py-2.5 rounded-lg font-medium transition-all duration-200">
+                  <button
+                    onClick={() => handleDelete(product.id)}
+                    className="flex-1 flex items-center justify-center gap-2 bg-red-50 text-red-600 hover:bg-red-100 py-2.5 rounded-lg font-medium transition-all duration-200"
+                  >
                     <Trash2 size={16} />
                     Hapus
                   </button>

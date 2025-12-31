@@ -37,4 +37,19 @@ const editProductByIdAPI = async (formData, id) => {
   });
 };
 
-export { createProductAPI, getProductsAPI, getProductById, editProductByIdAPI };
+const deleteProductByIdAPI = async (id) => {
+  return await fetch(`${url}/dashboard/products/delete/${id}`, {
+    method: "DELETE",
+    headers: {
+      "Content-type": "application/json",
+    },
+  });
+};
+
+export {
+  createProductAPI,
+  getProductsAPI,
+  getProductById,
+  editProductByIdAPI,
+  deleteProductByIdAPI,
+};

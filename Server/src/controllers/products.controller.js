@@ -1,5 +1,6 @@
 import {
   createProductService,
+  deleteProductByIdService,
   editProductByIdService,
   getAllProductsService,
   getProductByIdService,
@@ -22,6 +23,7 @@ export const addProductController = async (req, res) => {
       .status(result.statusCode)
       .json({ success: result.success, message: result.message });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -49,6 +51,7 @@ export const getProductById = async (req, res) => {
       data: result.data,
     });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ success: false, message: error.message });
   }
 };
@@ -74,6 +77,22 @@ export const editProductById = async (req, res) => {
       .status(result.statusCode)
       .json({ success: result.success, message: result.message });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const deleteProductById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const result = await deleteProductByIdService(id);
+
+    return res
+      .status(result.statusCode)
+      .json({ success: result.success, message: result.message });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: error.message });
   }
 };

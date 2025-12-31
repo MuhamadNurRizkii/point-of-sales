@@ -1,6 +1,7 @@
 import express from "express";
 import {
   addProductController,
+  deleteProductById,
   editProductById,
   getAllProducts,
   getProductById,
@@ -25,5 +26,8 @@ Product.put(
   upload.single("image"),
   editProductById
 );
+
+// delet product by id
+Product.delete("/dashboard/products/delete/:id", deleteProductById);
 
 export default Product;

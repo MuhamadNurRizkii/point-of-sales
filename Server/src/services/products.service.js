@@ -216,3 +216,57 @@ export const editProductByIdService = async (request, file, id) => {
     connection.release(); // Kembalikan koneksi ke pool
   }
 };
+
+export const deleteProductByIdService = async (id) => {
+  try {
+    if (!id) {
+      return {
+        success: false,
+        statusCode: 400,
+        message: "ID product wajib diisi",
+      };
+    }
+
+    const [existing] = await pool.query(
+      "SELECT public_id FROM products WHERE id = ?",
+      [id]
+    );
+
+    if (existing.length === 0) {
+      return {
+        success: false,
+        statusCode: 404,
+        message: "Product tidak ditemukan",
+      };
+    }
+
+    if (existing[0].public_id) {
+      await deleteFile(existing[0].public_id).catch((err) =>
+        console.error("Cloudinary Cleanup Error:", err)
+      );
+    }
+
+    const deleteQuery = "DELETE FROM products WHERE id = ?";
+    const [result] = await pool.query(deleteQuery, [id]);
+
+    if (result.affectedRows === 0) {
+      return {
+        success: false,
+        statusCode: 404,
+        message: "Product tidak ditemukan",
+      };
+    }
+
+    return {
+      success: true,
+      statusCode: 200,
+      message: "Product berhasil dihapus!",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      statusCode: 500,
+      message: `Terjadi kesalahan server`,
+    };
+  }
+};
