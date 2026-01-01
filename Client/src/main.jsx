@@ -12,6 +12,7 @@ import Transaction from "./pages/Transaction";
 import Report from "./pages/Report";
 import { Toaster } from "react-hot-toast";
 import CreateProducts from "./pages/CreateProducts";
+import CreateTransaction from "./pages/CreateTransaction";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -32,6 +33,7 @@ createRoot(document.getElementById("root")).render(
           <Route path="products/edit/:id" element={<EditProduct />} />
           <Route path="products/add" element={<CreateProducts />} />
           <Route path="transactions" element={<Transaction />} />
+          <Route path="transactions/add" element={<CreateTransaction />} />
           <Route path="report" element={<Report />} />
           <Route />
         </Route>

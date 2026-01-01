@@ -78,7 +78,7 @@ export const getAllProductsService = async (queryPage, queryLimit) => {
     const totalPages = Math.ceil(totalData / limit);
 
     const [result] = await pool.query(
-      `SELECT * FROM products LIMIT ? OFFSET ?`,
+      `SELECT id, name, price, category, image_url FROM products LIMIT ? OFFSET ?`,
       [limit, offset]
     );
 

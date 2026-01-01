@@ -6,12 +6,16 @@ import {
   Download,
   Filter,
   Calendar,
+  Plus,
 } from "lucide-react";
+import { useNavigate } from "react-router";
 
 const Transaction = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [selectedDateRange, setSelectedDateRange] = useState("all");
+
+  const navigate = useNavigate();
 
   const [transactions, setTransactions] = useState([
     {
@@ -168,9 +172,12 @@ const Transaction = () => {
             Kelola dan monitor semua transaksi penjualan
           </p>
         </div>
-        <button className="flex items-center gap-2 bg-linear-to-r from-blue-500 to-purple-500 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all duration-200 font-medium">
-          <Download size={20} />
-          Export
+        <button
+          onClick={() => navigate("/dashboard/transactions/add")}
+          className="flex items-center gap-2 bg-linear-to-r from-blue-500 to-purple-500 text-white px-6 py-3 rounded-lg hover:shadow-lg transition-all duration-200 font-medium"
+        >
+          <Plus size={20} />
+          Tambah Transaksi
         </button>
       </div>
 
