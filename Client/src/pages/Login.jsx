@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router";
 import { Eye, EyeOff, Mail, Lock, ArrowRight } from "lucide-react";
 import { loginAPI } from "../api/public";
 import toast from "react-hot-toast";
+import { saveToken } from "../utils/token";
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -67,6 +68,7 @@ function Login() {
     if (response.status === 200) {
       setIsLoading(true);
       toast.success(responseBody.message);
+      saveToken(responseBody.token);
       // Simulate API call
       setTimeout(() => {
         setIsLoading(false);

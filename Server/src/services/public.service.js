@@ -55,7 +55,7 @@ const loginService = async (request) => {
 
     // bikin token
     const accessToken = jwt.sign(
-      { id: isUsername.id },
+      { id: isUsername[0].id, username: isUsername[0].username },
       process.env.ACCESS_TOKEN,
       { expiresIn: "7d" }
     );

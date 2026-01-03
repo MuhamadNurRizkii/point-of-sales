@@ -4,6 +4,7 @@ import { Plus, Search, Edit2, Trash2, ChevronDown } from "lucide-react";
 import { deleteProductByIdAPI, getProductsAPI } from "../api/products";
 import toast from "react-hot-toast";
 import { alertConfirm } from "../utils/alert";
+import { getToken } from "../utils/token";
 
 const Products = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -15,6 +16,7 @@ const Products = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const page = parseInt(searchParams.get("page") || 1);
   const limit = 6;
+  const token = getToken();
 
   const categories = ["all", "makanan", "minuman", "lain-lain"];
   const filteredProducts = products.filter((product) => {
@@ -38,7 +40,7 @@ const Products = () => {
     try {
       setLoading(true);
 
-      const response = await getProductsAPI(page, limit);
+      const response = await getProductsAPI(page, limit, token);
       const responseBody = await response.json();
 
       if (responseBody.success) {
@@ -72,7 +74,7 @@ const Products = () => {
         return;
       }
 
-      const response = await deleteProductByIdAPI(id);
+      const response = await deleteProductByIdAPI(id, token);
       const responseBody = await response.json();
       console.log(responseBody);
 

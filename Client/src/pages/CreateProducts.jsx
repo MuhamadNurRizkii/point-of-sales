@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { createProductAPI } from "../api/products";
 import { useNavigate } from "react-router";
+import { getToken } from "../utils/token";
 
 const CreateProducts = () => {
   const [name, setName] = useState("");
@@ -20,6 +21,7 @@ const CreateProducts = () => {
   const [stock, setStock] = useState(0);
   const [category, setCategory] = useState("makanan");
   const [image, setImage] = useState(null);
+  const token = getToken();
 
   const navigate = useNavigate();
   const [preview, setPreview] = useState(null);
@@ -89,7 +91,7 @@ const CreateProducts = () => {
     setIsLoading(true);
     // Simulate API call
 
-    const response = await createProductAPI(formData);
+    const response = await createProductAPI(formData, token);
     const responseBody = await response.json();
 
     if (responseBody.success) {

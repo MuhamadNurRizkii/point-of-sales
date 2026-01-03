@@ -17,6 +17,7 @@ import {
   getProductById,
 } from "../api/products";
 import { useNavigate, useParams } from "react-router";
+import { getToken } from "../utils/token";
 
 const EditProduct = () => {
   const [name, setName] = useState("");
@@ -24,6 +25,7 @@ const EditProduct = () => {
   const [stock, setStock] = useState(0);
   const [category, setCategory] = useState("makanan");
   const [image, setImage] = useState(null);
+  const token = getToken();
 
   const params = useParams();
   const navigate = useNavigate();
@@ -40,7 +42,7 @@ const EditProduct = () => {
   ];
   // fetch product
   const fetchProduct = async () => {
-    const response = await getProductById(params.id);
+    const response = await getProductById(params.id, token);
     const { success, message, data } = await response.json();
 
     if (success) {
@@ -115,7 +117,7 @@ const EditProduct = () => {
     setIsLoading(true);
     // Simulate API call
 
-    const response = await editProductByIdAPI(formData, params.id);
+    const response = await editProductByIdAPI(formData, params.id, token);
     const responseBody = await response.json();
 
     if (responseBody.success) {

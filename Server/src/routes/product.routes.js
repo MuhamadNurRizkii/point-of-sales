@@ -7,8 +7,11 @@ import {
   getProductById,
 } from "../controllers/products.controller.js";
 import { upload } from "../middleware/multer.js";
+import { authMiddleware } from "../middleware/auth.js";
 
 const Product = express.Router();
+
+Product.use(authMiddleware);
 
 // create new Product
 Product.post(
