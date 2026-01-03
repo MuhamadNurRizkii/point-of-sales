@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { getProductsAPI } from "../api/products";
+import DetailTransactionCard from "../components/DetailTransactionCard";
 
 const CreateTransaction = () => {
   const [products, setProducts] = useState([]);
   const [transactionItems, setTransactionItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [hoveredProductId, setHoveredProductId] = useState(null);
+  const [sendData, setSendData] = useState([]);
+  const [show, setShow] = useState(true);
 
   const fetchProducts = async () => {
     try {
@@ -77,6 +80,12 @@ const CreateTransaction = () => {
     return transactionItems.reduce((sum, item) => sum + item.subtotal, 0);
   };
 
+  const handleClickPayment = (items) => {
+    const data = items.map(({ id, quantity }) => ({ id, qty: quantity }));
+
+    setSendData(data);
+  };
+
   useEffect(() => {
     fetchProducts();
   }, []);
@@ -84,7 +93,7 @@ const CreateTransaction = () => {
   console.log(transactionItems);
 
   return (
-    <div className="flex gap-5 h-screen p-5 bg-gray-100">
+    <div className="flex relative gap-5 h-screen p-5 bg-gray-100">
       {/* Left Side - Products */}
       <div className="flex-1 overflow-y-auto bg-white p-5 rounded-lg shadow-sm">
         <h2 className="mt-0 mb-5 text-gray-800 font-bold text-lg">
@@ -156,7 +165,6 @@ const CreateTransaction = () => {
           </div>
         )}
       </div>
-
       {/* Right Side - Transaction List */}
       <div className="flex-1 overflow-y-auto bg-white p-5 rounded-lg shadow-sm flex flex-col">
         <h2 className="mt-0 mb-5 text-gray-800 font-bold text-lg">
@@ -284,14 +292,22 @@ const CreateTransaction = () => {
             }`}
             disabled={transactionItems.length === 0}
             onClick={() => {
-              alert("Transaksi berhasil ditambahkan!");
-              setTransactionItems([]);
+              handleClickPayment(transactionItems);
+              setShow(!show);
+              // alert("Transaksi berhasil ditambahkan!");
+              // setTransactionItems([]);
             }}
           >
             Selesaikan Transaksi
           </button>
         </div>
       </div>
+      <DetailTransactionCard
+        show={show}
+        setShow={setShow}
+        totalPrice={calculateTotal()}
+        data={sendData}
+      />
     </div>
   );
 };
