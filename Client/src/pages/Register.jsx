@@ -93,7 +93,6 @@ const Register = () => {
       formData.password
     );
     const responseBody = await response.json();
-    console.log(responseBody);
 
     if (responseBody.success) {
       setIsLoading(true);

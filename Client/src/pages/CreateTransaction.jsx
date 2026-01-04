@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { getProductsAPI } from "../api/products";
 import DetailTransactionCard from "../components/DetailTransactionCard";
+import { getToken } from "../utils/token";
 
 const CreateTransaction = () => {
   const [products, setProducts] = useState([]);
@@ -9,13 +10,14 @@ const CreateTransaction = () => {
   const [hoveredProductId, setHoveredProductId] = useState(null);
   const [sendData, setSendData] = useState([]);
   const [show, setShow] = useState(true);
+  const token = getToken();
 
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const response = await getProductsAPI(1, 100);
+      const response = await getProductsAPI(1, 100, token);
       const data = await response.json();
-      console.log(data);
+
       if (data.success) {
         setProducts(data.paging.data);
       }
@@ -89,8 +91,6 @@ const CreateTransaction = () => {
   useEffect(() => {
     fetchProducts();
   }, []);
-
-  console.log(transactionItems);
 
   return (
     <div className="flex relative gap-5 h-screen p-5 bg-gray-100">

@@ -1,9 +1,14 @@
 import pool from "../db/database.js";
 
-export const createTransactionService = async (items) => {
+export const createTransactionService = async (
+  paymentMethod,
+  items,
+  userId
+) => {
   const conn = await pool.getConnection();
   try {
     await conn.beginTransaction();
+    console.log(items);
 
     let total = 0;
     const detailItems = [];
@@ -50,7 +55,7 @@ export const createTransactionService = async (items) => {
 
     for (const item of detailItems) {
       await conn.query(
-        "INSERT INTO transaction_items (transactionn_id, product_id, quantity, price, subtotal) VALUES (?, ?, ?, ?)",
+        "INSERT INTO transaction_items (transaction_id, product_id, quantity, price, subtotal) VALUES (?, ?, ?, ?, ?)",
         [trxId, item.product_id, item.price, item.quantity, item.subtotal]
       );
 
@@ -69,6 +74,7 @@ export const createTransactionService = async (items) => {
     };
   } catch (error) {
     await conn.rollback();
+
     return {
       success: false,
       statusCode: 500,

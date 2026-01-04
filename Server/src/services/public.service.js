@@ -24,7 +24,8 @@ const loginService = async (request) => {
     const { username, password } = value;
 
     // query untuk mengambil data id, username, dan password berdasarkan input username user
-    const sql = "SELECT id, username, password FROM users WHERE username = ?";
+    const sql =
+      "SELECT id, nama_depan, nama_belakang, username, password, role FROM users WHERE username = ?";
 
     // hasil query database
     const [isUsername] = await pool.query(sql, [username]);
@@ -52,10 +53,11 @@ const loginService = async (request) => {
         message: "username atau password salah!",
       };
     }
+    const fullName = `${isUsername[0].nama_depan} ${isUsername[0].nama_belakang}`;
 
     // bikin token
     const accessToken = jwt.sign(
-      { id: isUsername[0].id, username: isUsername[0].username },
+      { id: isUsername[0].id, username: fullName, role: isUsername[0].role },
       process.env.ACCESS_TOKEN,
       { expiresIn: "7d" }
     );

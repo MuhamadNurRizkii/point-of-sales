@@ -7,6 +7,6 @@ const Transaction = express.Router();
 Transaction.use(authMiddleware);
 
 // create Transaction
-Transaction.post("/dashboard/transactions", createTransactionController);
+Transaction.post("/dashboard/transaction/add", createTransactionController);
 
 export default Transaction;

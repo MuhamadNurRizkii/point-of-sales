@@ -1,10 +1,15 @@
 import React, { useEffect } from "react";
 import { useState } from "react";
+import { createTrasactionAPI } from "../api/transaction";
+import { getToken } from "../utils/token";
+import { toast } from "react-hot-toast";
 
 const DetailTransactionCard = ({ totalPrice, show, setShow, data }) => {
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [payment, setPayment] = useState(0);
   const [active, setActive] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const token = getToken();
 
   console.log(data);
 
@@ -18,6 +23,34 @@ const DetailTransactionCard = ({ totalPrice, show, setShow, data }) => {
 
   const result = Number(payment || 0) - totalPrice;
   const isNegative = result < 0;
+
+  const dataTransaction = {
+    payment_method: paymentMethod,
+    data,
+  };
+
+  const handleClick = async () => {
+    try {
+      setLoading(true);
+
+      const response = await createTrasactionAPI(dataTransaction, token);
+      const responseBody = await response.json();
+
+      console.log(responseBody);
+
+      if (responseBody.success) {
+        toast.success(responseBody.message);
+        setShow(!show);
+        setPayment(0);
+      } else {
+        toast.error(responseBody.message);
+      }
+    } catch (error) {
+      console.error(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div
@@ -123,6 +156,7 @@ const DetailTransactionCard = ({ totalPrice, show, setShow, data }) => {
           </button>
 
           <button
+            onClick={() => handleClick()}
             className="flex-1 py-3 rounded-lg bg-green-500 text-white font-bold
                    hover:bg-green-600 transition"
           >

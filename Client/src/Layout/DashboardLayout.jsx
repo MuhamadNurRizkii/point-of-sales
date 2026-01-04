@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link, Outlet, useLocation } from "react-router";
+
 import {
   Home,
   Package,
@@ -9,10 +10,13 @@ import {
   X,
   LogOut,
 } from "lucide-react";
+import { getToken, parsingToken } from "../utils/token";
 
 const DashboardLayout = () => {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const token = getToken();
+  const decoded = parsingToken(token);
 
   const menuItems = [
     {
@@ -116,6 +120,9 @@ const DashboardLayout = () => {
               </p>
             </div>
             <div className="flex items-center gap-4">
+              <h2 className="text-xl font-bold text-gray-800">
+                Hello, {decoded.username}
+              </h2>
               <div className="w-10 h-10 bg-linear-to-br from-blue-400 to-purple-400 rounded-full cursor-pointer hover:shadow-lg transition-shadow"></div>
             </div>
           </div>

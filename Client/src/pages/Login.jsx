@@ -63,7 +63,6 @@ function Login() {
 
     const response = await loginAPI(formData.username, formData.password);
     const responseBody = await response.json();
-    console.log(responseBody);
 
     if (response.status === 200) {
       setIsLoading(true);
