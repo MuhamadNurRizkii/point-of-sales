@@ -56,7 +56,7 @@ export const createTransactionService = async (
     for (const item of detailItems) {
       await conn.query(
         "INSERT INTO transaction_items (transaction_id, product_id, quantity, price, subtotal) VALUES (?, ?, ?, ?, ?)",
-        [trxId, item.product_id, item.price, item.quantity, item.subtotal]
+        [trxId, item.product_id, item.quantity, item.price, item.subtotal]
       );
 
       await conn.query("UPDATE products SET stock = stock - ? WHERE id = ?", [
