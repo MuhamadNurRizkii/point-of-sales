@@ -3,6 +3,7 @@ import { useState } from "react";
 import { createTrasactionAPI } from "../api/transaction";
 import { getToken } from "../utils/token";
 import { toast } from "react-hot-toast";
+import { alertError } from "../utils/alert";
 
 const DetailTransactionCard = ({
   totalPrice,
@@ -41,7 +42,7 @@ const DetailTransactionCard = ({
       setLoading(true);
 
       if (payment < totalPrice) {
-        toast.error("Uang tidak cukup!");
+        await alertError("Uang tidak cukup!");
         return;
       }
 

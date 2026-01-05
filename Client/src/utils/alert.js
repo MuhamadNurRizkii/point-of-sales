@@ -12,4 +12,12 @@ const alertConfirm = () => {
   });
 };
 
-export { alertConfirm };
+const alertError = (message) => {
+  return Swal.fire({
+    icon: "error",
+    title: "Oops...",
+    text: message,
+  });
+};
+
+export { alertConfirm, alertError };
