@@ -307,6 +307,8 @@ const CreateTransaction = () => {
         setShow={setShow}
         totalPrice={calculateTotal()}
         data={sendData}
+        fetchData={fetchProducts}
+        setTransaction={setTransactionItems}
       />
     </div>
   );

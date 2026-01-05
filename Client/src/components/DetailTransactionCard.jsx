@@ -4,7 +4,14 @@ import { createTrasactionAPI } from "../api/transaction";
 import { getToken } from "../utils/token";
 import { toast } from "react-hot-toast";
 
-const DetailTransactionCard = ({ totalPrice, show, setShow, data }) => {
+const DetailTransactionCard = ({
+  totalPrice,
+  show,
+  setShow,
+  data,
+  fetchData,
+  setTransaction,
+}) => {
   const [paymentMethod, setPaymentMethod] = useState("cash");
   const [payment, setPayment] = useState(0);
   const [active, setActive] = useState(false);
@@ -33,6 +40,11 @@ const DetailTransactionCard = ({ totalPrice, show, setShow, data }) => {
     try {
       setLoading(true);
 
+      if (payment < totalPrice) {
+        toast.error("Uang tidak cukup!");
+        return;
+      }
+
       const response = await createTrasactionAPI(dataTransaction, token);
       const responseBody = await response.json();
 
@@ -42,6 +54,8 @@ const DetailTransactionCard = ({ totalPrice, show, setShow, data }) => {
         toast.success(responseBody.message);
         setShow(!show);
         setPayment(0);
+        fetchData();
+        setTransaction([]);
       } else {
         toast.error(responseBody.message);
       }
