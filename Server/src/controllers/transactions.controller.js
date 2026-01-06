@@ -1,4 +1,7 @@
-import { createTransactionService } from "../services/transaction.service.js";
+import {
+  createTransactionService,
+  getAllTransactionService,
+} from "../services/transaction.service.js";
 
 export const createTransactionController = async (req, res) => {
   try {
@@ -20,6 +23,18 @@ export const createTransactionController = async (req, res) => {
     return res
       .status(result.statusCode)
       .json({ success: result.success, message: result.message });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const getAllTransactionController = async (req, res) => {
+  try {
+    const result = await getAllTransactionService();
+
+    return res
+      .status(result.statusCode)
+      .json({ success: result.success, payload: result.payload });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
   }

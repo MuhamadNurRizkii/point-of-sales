@@ -82,3 +82,64 @@ export const createTransactionService = async (
     };
   }
 };
+
+export const getAllTransactionService = async () => {
+  try {
+    const [dataTransaction] = await pool.query(`SELECT 
+  t.id,
+  date(t.created_at) as date,
+  u.nama_depan,
+  u.nama_belakang,
+  t.payment_method,
+  SUM(ti.quantity) AS qty,
+  SUM(ti.subtotal) AS total
+FROM users u
+JOIN transactions t ON u.id = t.user_id
+JOIN transaction_items ti ON t.id = ti.transaction_id
+GROUP BY 
+  t.id,
+  t.created_at,
+  u.nama_depan,
+  u.nama_belakang,
+  t.payment_method
+ORDER BY t.created_at DESC;`);
+
+    const [reportTransaction] = await pool.query(`SELECT 
+  COUNT(DISTINCT t.id) AS total_transaksi,
+  SUM(ti.subtotal) AS total_pendapatan
+  FROM transactions t
+  JOIN transaction_items ti ON t.id = ti.transaction_id
+  WHERE DATE(t.created_at) = CURDATE();;`);
+
+    if (dataTransaction.length === 0) {
+      return {
+        success: false,
+        statusCode: 404,
+        message: "Data tidak ditemukan!",
+      };
+    }
+
+    if (reportTransaction.length === 0) {
+      return {
+        success: false,
+        statusCode: 404,
+        message: "Data tidak ditemukan!",
+      };
+    }
+
+    return {
+      success: true,
+      statusCode: 200,
+      payload: {
+        dataTransaction: dataTransaction,
+        reportTransaction: reportTransaction,
+      },
+    };
+  } catch (error) {
+    return {
+      success: false,
+      statusCode: 500,
+      message: "Terjadi kesalahan server",
+    };
+  }
+};
