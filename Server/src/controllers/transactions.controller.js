@@ -30,7 +30,10 @@ export const createTransactionController = async (req, res) => {
 
 export const getAllTransactionController = async (req, res) => {
   try {
-    const result = await getAllTransactionService();
+    const page = Number(req.query.page);
+    const limit = Number(req.query.limit);
+
+    const result = await getAllTransactionService(page, limit);
 
     return res
       .status(result.statusCode)

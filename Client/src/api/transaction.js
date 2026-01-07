@@ -11,4 +11,18 @@ const createTrasactionAPI = async (data, token) => {
   });
 };
 
-export { createTrasactionAPI };
+const getTransactionsAPI = async (page, limit, token) => {
+  const request = new URL(`${url}/dashboard/transactions`);
+
+  request.searchParams.append("page", page);
+  request.searchParams.append("limit", limit);
+  return await fetch(request, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export { createTrasactionAPI, getTransactionsAPI };

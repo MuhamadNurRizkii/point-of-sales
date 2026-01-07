@@ -83,9 +83,11 @@ export const createTransactionService = async (
   }
 };
 
-export const getAllTransactionService = async () => {
+export const getAllTransactionService = async (page = 1, limit = 10) => {
   try {
-    const [dataTransaction] = await pool.query(`SELECT 
+    const offset = (page - 1) * limit;
+    const [dataTransaction] = await pool.query(
+      `SELECT 
   t.id,
   date(t.created_at) as date,
   u.nama_depan,
@@ -96,20 +98,28 @@ export const getAllTransactionService = async () => {
 FROM users u
 JOIN transactions t ON u.id = t.user_id
 JOIN transaction_items ti ON t.id = ti.transaction_id
+WHERE DATE(t.created_at) = CURDATE()
 GROUP BY 
   t.id,
   t.created_at,
   u.nama_depan,
   u.nama_belakang,
   t.payment_method
-ORDER BY t.created_at DESC;`);
+ORDER BY t.created_at DESC
+LIMIT ? OFFSET ?;`,
+      [limit, offset]
+    );
+
+    const [[{ total_data }]] = await pool.query(`
+      SELECT COUNT(DISTINCT t.id) AS total_data FROM transactions t WHERE DATE(t.created_at) = CURDATE();
+      `);
 
     const [reportTransaction] = await pool.query(`SELECT 
   COUNT(DISTINCT t.id) AS total_transaksi,
   SUM(ti.subtotal) AS total_pendapatan
   FROM transactions t
   JOIN transaction_items ti ON t.id = ti.transaction_id
-  WHERE DATE(t.created_at) = CURDATE();;`);
+  WHERE DATE(t.created_at) = CURDATE();`);
 
     if (dataTransaction.length === 0) {
       return {
@@ -133,6 +143,12 @@ ORDER BY t.created_at DESC;`);
       payload: {
         dataTransaction: dataTransaction,
         reportTransaction: reportTransaction,
+        pagination: {
+          page,
+          limit,
+          total_data,
+          total_page: Math.ceil(total_data / limit),
+        },
       },
     };
   } catch (error) {
