@@ -121,22 +121,6 @@ LIMIT ? OFFSET ?;`,
   JOIN transaction_items ti ON t.id = ti.transaction_id
   WHERE DATE(t.created_at) = CURDATE();`);
 
-    if (dataTransaction.length === 0) {
-      return {
-        success: false,
-        statusCode: 404,
-        message: "Data tidak ditemukan!",
-      };
-    }
-
-    if (reportTransaction.length === 0) {
-      return {
-        success: false,
-        statusCode: 404,
-        message: "Data tidak ditemukan!",
-      };
-    }
-
     return {
       success: true,
       statusCode: 200,
