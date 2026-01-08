@@ -4,7 +4,6 @@ const createProductAPI = async (formData, token) => {
   return await fetch(`${url}/dashboard/products/add`, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
     body: formData,
