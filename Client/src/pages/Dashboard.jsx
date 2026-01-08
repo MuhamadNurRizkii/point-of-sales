@@ -4,15 +4,6 @@ import { ShoppingBag, TrendingUp, Package, DollarSign } from "lucide-react";
 const Dashboard = () => {
   const stats = [
     {
-      title: "Total Penjualan",
-      value: "2,543",
-      icon: ShoppingBag,
-      color: "bg-blue-500",
-      lightColor: "bg-blue-50",
-      textColor: "text-blue-600",
-      change: "+12% dari bulan lalu",
-    },
-    {
       title: "Total Transaksi",
       value: "1,234",
       icon: TrendingUp,
