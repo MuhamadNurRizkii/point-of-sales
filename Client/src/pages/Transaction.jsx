@@ -11,12 +11,14 @@ import {
 import { useNavigate, useSearchParams } from "react-router";
 import { getTransactionsAPI } from "../api/transaction";
 import { getToken } from "../utils/token";
-import toast from "react-hot-toast";
+import { formatPrice } from "../utils/format";
+import DataTable from "../components/DataTable";
 
 const Transaction = () => {
   const navigate = useNavigate();
 
   const [transactions, setTransactions] = useState([]);
+  const [search, setSearch] = useState("");
   const [report, setReport] = useState([]);
 
   const [totalPages, setTotalPages] = useState(1);
@@ -25,23 +27,17 @@ const Transaction = () => {
   const limit = 10;
   const token = getToken();
 
-  const statuses = ["all", "Completed", "Pending", "Cancelled"];
+  const statuses = ["all", "Cash", "Qris"];
 
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat("id-ID", {
-      style: "currency",
-      currency: "IDR",
-      minimumFractionDigits: 0,
-    }).format(price);
-  };
+  const filteredData = transactions.filter((item) => {
+    const keyword = search.toLowerCase();
+    const fullName = `${item.nama_depan} ${item.nama_belakang}`.toLowerCase();
 
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString("id-ID", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
-  };
+    return (
+      fullName.includes(keyword) ||
+      item.payment_method.toLowerCase().includes(keyword)
+    );
+  });
 
   const goToPage = (pageNumber) => {
     setSearchParams({ page: pageNumber });
@@ -61,19 +57,6 @@ const Transaction = () => {
       }
     } catch (error) {
       console.error(error);
-    }
-  };
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "Completed":
-        return "bg-green-100 text-green-800 border border-green-200";
-      case "Pending":
-        return "bg-yellow-100 text-yellow-800 border border-yellow-200";
-      case "Cancelled":
-        return "bg-red-100 text-red-800 border border-red-200";
-      default:
-        return "bg-gray-100 text-gray-800 border border-gray-200";
     }
   };
 
@@ -123,7 +106,9 @@ const Transaction = () => {
           <Search className="absolute left-3 top-3.5 text-gray-400" size={20} />
           <input
             type="text"
-            placeholder="Cari ID transaksi atau nama customer..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Cari ID transaksi atau nama kasir..."
             className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
           />
         </div>
@@ -174,41 +159,11 @@ const Transaction = () => {
               </tr>
             </thead>
             <tbody>
-              {transactions.map((transaction, index) => (
-                <tr
-                  key={transaction.id}
-                  className="border-b border-gray-100 hover:bg-gray-50 transition-colors duration-150"
-                >
-                  <td className="px-6 py-4 text-sm font-bold text-blue-600">
-                    TRX00{transaction.id}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-700">
-                    {formatDate(transaction.date.split("T"))}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-700">
-                    {transaction.nama_depan} {transaction.nama_belakang}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-700">
-                    <span className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">
-                      {transaction.qty} item
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm font-semibold text-gray-900">
-                    {formatPrice(transaction.total)}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-700">
-                    <span className="px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-xs font-medium">
-                      {transaction.payment_method.toUpperCase()}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-center">
-                    <button className="inline-flex items-center gap-2 bg-blue-50 text-blue-600 hover:bg-blue-100 px-4 py-2 rounded-lg transition-all duration-200 font-medium">
-                      <Eye size={16} />
-                      Lihat
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {search === "" ? (
+                <DataTable data={transactions} />
+              ) : (
+                <DataTable data={filteredData} />
+              )}
             </tbody>
           </table>
         </div>
