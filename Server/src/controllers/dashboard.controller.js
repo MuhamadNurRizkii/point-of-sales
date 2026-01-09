@@ -6,9 +6,12 @@ export const getDataController = async (req, res) => {
 
     console.log(result);
 
-    return res
-      .status(result.statusCode)
-      .json({ message: result.message, payload: result.payload });
+    return res.status(result.statusCode).json({
+      success: result.success,
+      message: result.message,
+      dataTransaction: result.dataTransaction,
+      payload: result.payload,
+    });
   } catch (error) {
     return res
       .status(500)
