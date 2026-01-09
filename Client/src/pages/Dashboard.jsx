@@ -14,6 +14,7 @@ const Dashboard = () => {
     pendapatan: 0,
   });
   const [dataTransaction, setDataTransaction] = useState([]);
+  const [productPopuler, setProductPopuler] = useState([]);
   const [loading, setLoading] = useState(true);
   const token = getToken();
 
@@ -26,6 +27,7 @@ const Dashboard = () => {
       if (responseBody.success) {
         setData(responseBody.payload);
         setDataTransaction(responseBody.dataTransaction);
+        setProductPopuler(responseBody.productPopuler);
       } else {
         toast.error(responseBody.message);
       }
@@ -36,8 +38,6 @@ const Dashboard = () => {
       setLoading(false);
     }
   };
-
-  console.log(dataTransaction);
 
   useEffect(() => {
     fetchData();
@@ -212,12 +212,47 @@ const Dashboard = () => {
           )}
         </div>
         <div className="bg-white rounded-2xl shadow-md p-6 border border-gray-100">
-          <h2 className="text-xl font-bold text-gray-800 mb-4">
-            Produk Populer
-          </h2>
-          <div className="text-gray-500 text-center py-8">
-            <p>Produk terpopuler akan ditampilkan di sini</p>
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold text-gray-800">Produk Populer</h2>
+            <span className="text-sm text-gray-500">
+              {productPopuler.length} produk
+            </span>
           </div>
+
+          {loading ? (
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+              <p className="text-gray-500 mt-2">Memuat data...</p>
+            </div>
+          ) : productPopuler.length > 0 ? (
+            <div className="space-y-3">
+              {productPopuler.map((product, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-4 bg-linear-to-r from-blue-50 to-transparent rounded-lg hover:shadow-md transition-all duration-200 border border-blue-100"
+                >
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 text-sm">
+                      {product.name}
+                    </h3>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {product.total_terjual} unit terjual
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <span className="inline-block bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold">
+                      #{index + 1}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <Package className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+              <p className="text-gray-500">Belum ada data produk populer</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

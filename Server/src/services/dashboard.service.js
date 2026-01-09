@@ -30,11 +30,25 @@ GROUP BY
 ORDER BY t.created_at DESC
 LIMIT 5;`);
 
+    const [productPopuler] = await pool.query(`SELECT 
+  p.id,
+  p.name,
+  SUM(ti.quantity) AS total_terjual
+FROM transactions t
+JOIN transaction_items ti ON t.id = ti.transaction_id
+JOIN products p ON ti.product_id = p.id
+WHERE DATE(t.created_at) = CURDATE()
+GROUP BY p.id, p.name
+ORDER BY total_terjual DESC
+LIMIT 5;
+`);
+
     return {
       success: true,
       statusCode: 200,
       message: "Data berhasil diambil",
       dataTransaction,
+      productPopuler,
       payload: {
         produk_terjual: Number(report[0].produk_terjual),
         total_transaksi: Number(report[0].total_transaksi),

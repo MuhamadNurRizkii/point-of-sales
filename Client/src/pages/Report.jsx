@@ -172,7 +172,7 @@ const Report = () => {
           <h3 className="text-3xl font-bold text-gray-900">
             {currentData.productsCount.toLocaleString("id-ID")}
           </h3>
-          <p className="text-xs text-gray-500 mt-3">Total unit</p>
+          <p className="text-xs text-gray-500 mt-3">Total unit terjual</p>
         </div>
 
         {/* Rata-rata Transaksi */}
@@ -244,76 +244,6 @@ const Report = () => {
                 </p>
               </div>
             ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Category Breakdown */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Category Pie Chart Alternative */}
-        <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-          <h3 className="text-lg font-bold text-gray-800 mb-6">
-            Breakdown Kategori
-          </h3>
-          <div className="space-y-4">
-            {currentData.categoryBreakdown.map((cat, index) => (
-              <div key={index}>
-                <div className="flex items-center justify-between mb-2">
-                  <p className="font-semibold text-gray-800">{cat.name}</p>
-                  <p className="text-sm font-bold text-gray-700">
-                    {cat.percentage}%
-                  </p>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-                  <div
-                    className={`h-full rounded-full transition-all ${
-                      index === 0
-                        ? "bg-linear-to-r from-blue-500 to-blue-600"
-                        : "bg-linear-to-r from-purple-500 to-purple-600"
-                    }`}
-                    style={{ width: `${cat.percentage}%` }}
-                  ></div>
-                </div>
-                <p className="text-xs text-gray-500 mt-2">
-                  {formatPrice(cat.revenue)}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Summary Stats */}
-        <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-          <h3 className="text-lg font-bold text-gray-800 mb-6">Ringkasan</h3>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between pb-4 border-b border-gray-100">
-              <p className="text-gray-600">Total Revenue</p>
-              <p className="font-bold text-gray-900">
-                {formatPrice(currentData.totalRevenue)}
-              </p>
-            </div>
-            <div className="flex items-center justify-between pb-4 border-b border-gray-100">
-              <p className="text-gray-600">Total Transaksi</p>
-              <p className="font-bold text-gray-900">
-                {currentData.totalTransactions.toLocaleString("id-ID")}
-              </p>
-            </div>
-            <div className="flex items-center justify-between pb-4 border-b border-gray-100">
-              <p className="text-gray-600">Total Produk Terjual</p>
-              <p className="font-bold text-gray-900">
-                {currentData.productsCount.toLocaleString("id-ID")} unit
-              </p>
-            </div>
-            <div className="flex items-center justify-between pb-4 border-b border-gray-100">
-              <p className="text-gray-600">Rata-rata per Transaksi</p>
-              <p className="font-bold text-gray-900">
-                {formatPrice(currentData.averageTransaction)}
-              </p>
-            </div>
-            <div className="flex items-center justify-between pt-2">
-              <p className="text-gray-600">Growth Rate</p>
-              <p className="font-bold text-green-600">+15%</p>
-            </div>
           </div>
         </div>
       </div>

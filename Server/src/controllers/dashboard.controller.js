@@ -4,12 +4,11 @@ export const getDataController = async (req, res) => {
   try {
     const result = await getDataService();
 
-    console.log(result);
-
     return res.status(result.statusCode).json({
       success: result.success,
       message: result.message,
       dataTransaction: result.dataTransaction,
+      productPopuler: result.productPopuler,
       payload: result.payload,
     });
   } catch (error) {
