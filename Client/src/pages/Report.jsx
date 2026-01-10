@@ -10,10 +10,11 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { getToken } from "../utils/token.js";
-import { getDataReport } from "../api/report";
+import { getChartReport, getDataReport } from "../api/report";
 import { toast } from "react-hot-toast";
 import { useEffect } from "react";
 import { formatPrice } from "../utils/format.js";
+import { Chart } from "../components/chart.jsx";
 
 const Report = () => {
   const token = getToken();
@@ -26,11 +27,11 @@ const Report = () => {
   const startDate = `${currentYear}-${currentMonth}`;
 
   const [reportData, setReportData] = useState({});
+  const [chartData, setChartData] = useState([]);
 
   const fetchDataReport = async () => {
     const response = await getDataReport(token);
     const responseBody = await response.json();
-    console.log(responseBody.payload);
 
     if (responseBody.success) {
       setReportData(responseBody.payload);
@@ -39,12 +40,41 @@ const Report = () => {
     }
   };
 
-  const getMaxRevenue = () => {
-    return Math.max(...currentData.dailyRevenue.map((d) => d.revenue));
+  const fetchChartReport = async () => {
+    const response = await getChartReport(token);
+    const responseBody = await response.json();
+    console.log(responseBody.payload);
+
+    if (responseBody.success) {
+      setChartData(responseBody.payload);
+    } else {
+      toast.error(responseBody.message);
+    }
   };
+
+  const stats = chartData.reduce(
+    (acc, item) => {
+      const value = Number(item.total_pendapatan);
+
+      if (!acc.max || value > acc.max.value) {
+        acc.max = { value, tanggal: item.tanggal };
+      }
+
+      if (!acc.min || value < acc.min.value) {
+        acc.min = { value, tanggal: item.tanggal };
+      }
+
+      acc.sum += value;
+      return acc;
+    },
+    { max: null, min: null, sum: 0 }
+  );
+
+  const avg = chartData.length ? Math.round(stats.sum / chartData.length) : 0;
 
   useEffect(() => {
     fetchDataReport();
+    fetchChartReport();
   }, []);
 
   return (
@@ -133,51 +163,75 @@ const Report = () => {
           <h3 className="text-lg font-bold text-gray-800 mb-6">
             Pendapatan Harian
           </h3>
-          <div className="flex items-end justify-between h-64 gap-2">
-            {/* {currentData.dailyRevenue.map((item, index) => (
-              <div key={index} className="flex flex-col items-center flex-1">
-                <div className="relative h-full w-full flex items-end justify-center">
-                  <div
-                    className="w-full bg-linear-to-t from-blue-500 to-blue-400 rounded-t transition-all hover:shadow-lg rounded-sm"
-                    style={{
-                      height: `${(item.revenue / getMaxRevenue()) * 100}%`,
-                      minHeight: "4px",
-                    }}
-                  >
-                    <div className="opacity-0 hover:opacity-100 text-xs font-bold text-white text-center -mt-6 transition-opacity">
-                      {Math.round((item.revenue / 1000000) * 10) / 10}M
-                    </div>
-                  </div>
-                </div>
-                <p className="text-xs text-gray-500 mt-2">{item.date}</p>
-              </div>
-            ))} */}
-          </div>
+          {chartData.length > 0 ? (
+            <div className="space-y-4">
+              <Chart dataChart={chartData} />
+            </div>
+          ) : (
+            <div className="h-80 flex items-center justify-center text-gray-400">
+              <p>Tidak ada data tersedia</p>
+            </div>
+          )}
         </div>
 
-        {/* Top Products */}
+        {/* Summary Stats */}
         <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
           <h3 className="text-lg font-bold text-gray-800 mb-6">
-            Produk Terlaris
+            Ringkasan Periode
           </h3>
-          <div className="space-y-4">
-            {/* {currentData.topProducts.slice(0, 5).map((product, index) => (
-              <div
-                key={index}
-                className="flex items-center justify-between pb-4 border-b border-gray-100 last:border-0"
-              >
-                <div>
-                  <p className="font-semibold text-gray-800">{product.name}</p>
-                  <p className="text-sm text-gray-500">
-                    {product.quantity} unit terjual
+          {chartData.length > 0 ? (
+            <div className="space-y-4">
+              {/* Tertinggi */}
+              <div className="flex items-center justify-between pb-4 border-b border-gray-100">
+                <span className="text-gray-600">
+                  Hari dengan Pendapatan Tertinggi
+                </span>
+                <div className="text-right">
+                  <p className="font-bold text-blue-600 text-lg">
+                    {formatPrice(stats.max?.value || 0)}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {stats.max &&
+                      new Date(stats.max.tanggal).toLocaleDateString("id-ID", {
+                        timeZone: "UTC",
+                      })}
                   </p>
                 </div>
-                <p className="font-bold text-transparent bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text">
-                  {formatPrice(product.revenue)}
+              </div>
+
+              {/* Terendah */}
+              <div className="flex items-center justify-between pb-4 border-b border-gray-100">
+                <span className="text-gray-600">
+                  Hari dengan Pendapatan Terendah
+                </span>
+                <div className="text-right">
+                  <p className="font-bold text-orange-600 text-lg">
+                    {formatPrice(stats.min?.value || 0)}
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    {stats.min &&
+                      new Date(stats.min.tanggal).toLocaleDateString("id-ID", {
+                        timeZone: "UTC",
+                      })}
+                  </p>
+                </div>
+              </div>
+
+              {/* Rata-rata */}
+              <div className="flex items-center justify-between">
+                <span className="text-gray-600">
+                  Rata-rata Pendapatan Harian
+                </span>
+                <p className="font-bold text-green-600 text-lg">
+                  {formatPrice(avg)}
                 </p>
               </div>
-            ))} */}
-          </div>
+            </div>
+          ) : (
+            <div className="h-40 flex items-center justify-center text-gray-400">
+              <p>Tidak ada data tersedia</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

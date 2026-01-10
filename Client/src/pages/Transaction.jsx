@@ -24,7 +24,7 @@ const Transaction = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [searchParams, setSearchParams] = useSearchParams();
   const page = parseInt(searchParams.get("page") || 1);
-  const limit = 10;
+  const limit = 6;
   const token = getToken();
 
   const statuses = ["all", "Cash", "Qris"];
@@ -62,7 +62,7 @@ const Transaction = () => {
 
   useEffect(() => {
     fetchTransactions();
-  }, []);
+  }, [page]);
 
   return (
     <div className="w-full">
@@ -189,7 +189,11 @@ const Transaction = () => {
                 </button>
               ))}
             </div>
-            <button className="px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-100 transition-all font-medium">
+            <button
+              className="px-4 py-2 border border-gray-200 rounded-lg text-gray-700 hover:bg-gray-100 transition-all font-medium"
+              disabled={page === totalPages}
+              onClick={() => goToPage(page + 1)}
+            >
               Berikutnya
             </button>
           </div>

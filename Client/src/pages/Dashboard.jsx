@@ -18,6 +18,15 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const token = getToken();
 
+  const MAX_TRANSAKSI = 100;
+  const MAX_PRODUK = 200;
+  const MAX_PENDAPATAN = 1000000;
+
+  const getProgress = (value, max) => {
+    if (!value || !max) return 0;
+    return Math.min((value / max) * 100, 100);
+  };
+
   const fetchData = async () => {
     try {
       setLoading(true);
@@ -47,6 +56,7 @@ const Dashboard = () => {
     {
       title: "Total Transaksi",
       value: data.total_transaksi || 0,
+      progress: getProgress(data.total_transaksi, MAX_TRANSAKSI),
       icon: TrendingUp,
       color: "bg-green-500",
       lightColor: "bg-green-50",
@@ -55,6 +65,7 @@ const Dashboard = () => {
     {
       title: "Produk Terjual",
       value: data.produk_terjual || 0,
+      progress: getProgress(data.produk_terjual, MAX_PRODUK),
       icon: Package,
       color: "bg-purple-500",
       lightColor: "bg-purple-50",
@@ -63,6 +74,7 @@ const Dashboard = () => {
     {
       title: "Pendapatan",
       value: formatPrice(data.pendapatan || 0),
+      progress: getProgress(data.pendapatan, MAX_PENDAPATAN),
       icon: DollarSign,
       color: "bg-orange-500",
       lightColor: "bg-orange-50",
@@ -103,11 +115,13 @@ const Dashboard = () => {
               </p>
 
               {/* Progress Bar */}
-              <div className="mt-4 w-full bg-gray-200 rounded-full h-1">
-                <div
-                  className={`${stat.color} h-1 rounded-full`}
-                  style={{ width: "75%" }}
-                ></div>
+              <div className="mt-4">
+                <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                  <div
+                    className={`${stat.color} h-2 rounded-full transition-all duration-500`}
+                    style={{ width: `${stat.progress}%` }}
+                  />
+                </div>
               </div>
             </div>
           );

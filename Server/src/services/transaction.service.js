@@ -83,7 +83,7 @@ export const createTransactionService = async (
   }
 };
 
-export const getAllTransactionService = async (page = 1, limit = 10) => {
+export const getAllTransactionService = async (page, limit) => {
   try {
     const offset = (page - 1) * limit;
     const [dataTransaction] = await pool.query(

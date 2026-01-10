@@ -19,8 +19,6 @@ const DetailTransactionCard = ({
   const [loading, setLoading] = useState(true);
   const token = getToken();
 
-  console.log(data);
-
   const formatRupiah = (value) => {
     return value ? `Rp. ${Number(value).toLocaleString("id-ID")}` : "Rp. 0";
   };
@@ -114,7 +112,10 @@ const DetailTransactionCard = ({
                     name="payment_method"
                     value={method}
                     checked={paymentMethod === method}
-                    onChange={() => setPaymentMethod(method)}
+                    onChange={() => {
+                      setPayment(method === "qris" ? totalPrice : 0);
+                      setPaymentMethod(method);
+                    }}
                     className="hidden"
                   />
                   {method}

@@ -50,7 +50,7 @@ export const chartReportService = async () => {
   SUM(ti.subtotal) AS total_pendapatan
 FROM transactions t
 JOIN transaction_items ti ON t.id = ti.transaction_id
-WHERE t.created_at >= CURDATE() - INTERVAL 6 DAY
+WHERE t.created_at >= CURDATE() - INTERVAL 7 DAY
 GROUP BY DATE(t.created_at)
 ORDER BY tanggal ASC;
 `);

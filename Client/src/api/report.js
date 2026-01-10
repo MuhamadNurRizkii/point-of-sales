@@ -8,3 +8,12 @@ export const getDataReport = async (token) => {
     },
   });
 };
+
+export const getChartReport = async (token) => {
+  return await fetch(`${url}/dashboard/report/chart`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
