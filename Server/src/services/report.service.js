@@ -42,3 +42,29 @@ export const getDataReportService = async (year, month) => {
     };
   }
 };
+
+export const chartReportService = async () => {
+  try {
+    const [report] = await pool.query(`SELECT
+  DATE(t.created_at) AS tanggal,
+  SUM(ti.subtotal) AS total_pendapatan
+FROM transactions t
+JOIN transaction_items ti ON t.id = ti.transaction_id
+WHERE t.created_at >= CURDATE() - INTERVAL 6 DAY
+GROUP BY DATE(t.created_at)
+ORDER BY tanggal ASC;
+`);
+
+    return {
+      success: true,
+      statusCode: 200,
+      payload: report,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      statusCode: 500,
+      message: error.message,
+    };
+  }
+};
