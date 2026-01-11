@@ -83,7 +83,6 @@ const Register = () => {
     }
 
     // Submit form
-    console.log("Form submitted:", formData);
     // Add your registration logic here
 
     const response = await registerAPI(

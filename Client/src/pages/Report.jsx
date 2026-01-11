@@ -43,7 +43,6 @@ const Report = () => {
   const fetchChartReport = async () => {
     const response = await getChartReport(token);
     const responseBody = await response.json();
-    console.log(responseBody.payload);
 
     if (responseBody.success) {
       setChartData(responseBody.payload);

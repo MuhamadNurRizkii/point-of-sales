@@ -13,6 +13,7 @@ import Report from "./pages/Report";
 import { Toaster } from "react-hot-toast";
 import CreateProducts from "./pages/CreateProducts";
 import CreateTransaction from "./pages/CreateTransaction";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -27,14 +28,70 @@ createRoot(document.getElementById("root")).render(
         </Route>
 
         {/* Dashboar Layout */}
-        <Route path="/dashboard" element={<DashboardLayout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="products" element={<Products />} />
-          <Route path="products/edit/:id" element={<EditProduct />} />
-          <Route path="products/add" element={<CreateProducts />} />
-          <Route path="transactions" element={<Transaction />} />
-          <Route path="transactions/add" element={<CreateTransaction />} />
-          <Route path="report" element={<Report />} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["admin", "cashier"]}>
+              <DashboardLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route
+            index
+            element={
+              <ProtectedRoute allowedRoles={["admin", "cashier"]}>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="products"
+            element={
+              <ProtectedRoute allowedRoles={["admin", "cashier"]}>
+                <Products />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="products/edit/:id"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <EditProduct />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="products/add"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <CreateProducts />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="transactions"
+            element={
+              <ProtectedRoute allowedRoles={["admin", "cashier"]}>
+                <Transaction />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="transactions/add"
+            element={
+              <ProtectedRoute allowedRoles={["admin", "cashier"]}>
+                <CreateTransaction />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="report"
+            element={
+              <ProtectedRoute allowedRoles={["admin"]}>
+                <Report />
+              </ProtectedRoute>
+            }
+          />
           <Route />
         </Route>
         <Route path="*" element={<div>404 Not Found</div>} />

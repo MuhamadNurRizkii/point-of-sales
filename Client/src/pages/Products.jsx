@@ -4,7 +4,7 @@ import { Plus, Search, Edit2, Trash2, ChevronDown } from "lucide-react";
 import { deleteProductByIdAPI, getProductsAPI } from "../api/products";
 import toast from "react-hot-toast";
 import { alertConfirm } from "../utils/alert";
-import { getToken } from "../utils/token";
+import { getToken, parsingToken } from "../utils/token";
 
 const Products = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -17,6 +17,7 @@ const Products = () => {
   const page = parseInt(searchParams.get("page") || 1);
   const limit = 6;
   const token = getToken();
+  const user = parsingToken(token);
 
   const categories = ["all", "makanan", "minuman", "lain-lain"];
   const filteredProducts = products.filter((product) => {
@@ -207,20 +208,24 @@ const Products = () => {
 
                 {/* Action Buttons */}
                 <div className="flex gap-3">
-                  <Link
-                    to={`/dashboard/products/edit/${product.id}`}
-                    className="flex-1 flex items-center justify-center gap-2 bg-blue-50 text-blue-600 hover:bg-blue-100 py-2.5 rounded-lg font-medium transition-all duration-200"
-                  >
-                    <Edit2 size={16} />
-                    Edit
-                  </Link>
-                  <button
-                    onClick={() => handleDelete(product.id)}
-                    className="flex-1 flex items-center justify-center gap-2 bg-red-50 text-red-600 hover:bg-red-100 py-2.5 rounded-lg font-medium transition-all duration-200"
-                  >
-                    <Trash2 size={16} />
-                    Hapus
-                  </button>
+                  {user.role === "admin" && (
+                    <Link
+                      to={`/dashboard/products/edit/${product.id}`}
+                      className="flex-1 flex items-center justify-center gap-2 bg-blue-50 text-blue-600 hover:bg-blue-100 py-2.5 rounded-lg font-medium transition-all duration-200"
+                    >
+                      <Edit2 size={16} />
+                      Edit
+                    </Link>
+                  )}
+                  {user.role === "admin" && (
+                    <button
+                      onClick={() => handleDelete(product.id)}
+                      className="flex-1 flex items-center justify-center gap-2 bg-red-50 text-red-600 hover:bg-red-100 py-2.5 rounded-lg font-medium transition-all duration-200"
+                    >
+                      <Trash2 size={16} />
+                      Hapus
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

@@ -18,6 +18,10 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const token = getToken();
 
+  if (!token) {
+    navigate("/login");
+  }
+
   const MAX_TRANSAKSI = 100;
   const MAX_PRODUK = 200;
   const MAX_PENDAPATAN = 1000000;
@@ -42,7 +46,6 @@ const Dashboard = () => {
       }
     } catch (error) {
       toast.error("Gagal memuat data dashboard");
-      console.error(error);
     } finally {
       setLoading(false);
     }

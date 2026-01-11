@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, Outlet, useLocation } from "react-router";
+import { Link, Outlet, useLocation, useNavigate } from "react-router";
 
 import {
   Home,
@@ -10,13 +10,23 @@ import {
   X,
   LogOut,
 } from "lucide-react";
-import { getToken, parsingToken } from "../utils/token";
+import { deleteToken, getToken, parsingToken } from "../utils/token";
 
 const DashboardLayout = () => {
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const token = getToken();
   const decoded = parsingToken(token);
+  const navigate = useNavigate();
+
+  if (!token) {
+    navigate("/login");
+  }
+
+  const handleClick = () => {
+    deleteToken("access_token");
+    navigate("/login", { replace: true });
+  };
 
   const menuItems = [
     {
@@ -94,7 +104,10 @@ const DashboardLayout = () => {
 
         {/* Footer Sidebar */}
         <div className="relative bottom-0 left-0 right-0 p-4 ">
-          <button className="flex items-center gap-4 px-4 py-3 w-full rounded-lg text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-200">
+          <button
+            onClick={() => handleClick()}
+            className="flex items-center gap-4 px-4 py-3 w-full rounded-lg text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-200"
+          >
             <LogOut size={20} className="shrink-0" />
             {sidebarOpen && <span className="font-medium">Logout</span>}
           </button>

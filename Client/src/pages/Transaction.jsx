@@ -62,7 +62,6 @@ const Transaction = () => {
       console.error(error);
     }
   };
-  console.log(show);
 
   useEffect(() => {
     fetchTransactions();
