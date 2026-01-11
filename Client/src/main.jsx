@@ -14,6 +14,7 @@ import { Toaster } from "react-hot-toast";
 import CreateProducts from "./pages/CreateProducts";
 import CreateTransaction from "./pages/CreateTransaction";
 import ProtectedRoute from "./components/ProtectedRoute";
+import NotFound from "./pages/NotFound";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -94,7 +95,7 @@ createRoot(document.getElementById("root")).render(
           />
           <Route />
         </Route>
-        <Route path="*" element={<div>404 Not Found</div>} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>
