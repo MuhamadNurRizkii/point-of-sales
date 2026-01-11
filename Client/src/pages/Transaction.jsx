@@ -13,6 +13,7 @@ import { getTransactionsAPI } from "../api/transaction";
 import { getToken } from "../utils/token";
 import { formatPrice } from "../utils/format";
 import DataTable from "../components/DataTable";
+import DetailTransactionItem from "../components/DetailTransactionItem";
 
 const Transaction = () => {
   const navigate = useNavigate();
@@ -20,12 +21,14 @@ const Transaction = () => {
   const [transactions, setTransactions] = useState([]);
   const [search, setSearch] = useState("");
   const [report, setReport] = useState([]);
+  const [show, setShow] = useState(false);
 
   const [totalPages, setTotalPages] = useState(1);
   const [searchParams, setSearchParams] = useSearchParams();
   const page = parseInt(searchParams.get("page") || 1);
   const limit = 6;
   const token = getToken();
+  const [id, setId] = useState(null);
 
   const statuses = ["all", "Cash", "Qris"];
 
@@ -59,6 +62,7 @@ const Transaction = () => {
       console.error(error);
     }
   };
+  console.log(show);
 
   useEffect(() => {
     fetchTransactions();
@@ -160,12 +164,30 @@ const Transaction = () => {
             </thead>
             <tbody>
               {search === "" ? (
-                <DataTable data={transactions} />
+                <DataTable
+                  data={transactions}
+                  show={show}
+                  setShow={setShow}
+                  setId={setId}
+                />
               ) : (
-                <DataTable data={filteredData} />
+                <DataTable
+                  data={filteredData}
+                  show={show}
+                  setShow={setShow}
+                  setId={setId}
+                />
               )}
             </tbody>
           </table>
+          {show && (
+            <DetailTransactionItem
+              id={id}
+              token={token}
+              show={show}
+              setShow={setShow}
+            />
+          )}
         </div>
 
         {/* Pagination */}
@@ -199,6 +221,7 @@ const Transaction = () => {
           </div>
         </div>
       </div>
+
       {/* <div className="text-center py-16 bg-white rounded-xl border border-gray-100">
         <Search className="mx-auto text-gray-400 mb-4" size={48} />
         <h3 className="text-lg font-semibold text-gray-800 mb-2">

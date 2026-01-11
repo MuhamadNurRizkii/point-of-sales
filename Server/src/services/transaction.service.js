@@ -143,3 +143,47 @@ LIMIT ? OFFSET ?;`,
     };
   }
 };
+
+export const detailTransactionService = async (id) => {
+  try {
+    const [result] = await pool.query(
+      `SELECT
+    t.id,
+    DATE(t.created_at) AS date,
+    t.total_amount,
+    t.payment_method,
+    p.name AS produk,
+    ti.price AS harga_satuan,
+    ti.quantity AS qty,
+    ti.subtotal
+FROM transactions t
+JOIN transaction_items ti ON t.id = ti.transaction_id
+JOIN products p ON p.id = ti.product_id
+WHERE t.id = ?;
+;
+`,
+      [id]
+    );
+
+    if (result.length === 0) {
+      return {
+        success: false,
+        statusCode: 400,
+        message: "Data tidak ada!",
+      };
+    }
+
+    return {
+      success: true,
+      statusCode: 200,
+      message: "Data berhasil diambil!",
+      payload: result,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      statusCode: 500,
+      message: "Terjadi kesalahan server",
+    };
+  }
+};

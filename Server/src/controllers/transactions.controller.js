@@ -1,5 +1,6 @@
 import {
   createTransactionService,
+  detailTransactionService,
   getAllTransactionService,
 } from "../services/transaction.service.js";
 
@@ -37,5 +38,29 @@ export const getAllTransactionController = async (req, res) => {
       .json({ success: result.success, payload: result.payload });
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+export const getDetailTransaction = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    if (!id) {
+      return res
+        .status(400)
+        .json({ success: false, message: "id tidak ditemukan!" });
+    }
+
+    const result = await detailTransactionService(id);
+
+    return res.status(result.statusCode).json({
+      success: result.success,
+      message: result.message,
+      payload: result.payload,
+    });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: "Terjadi kesalahan server" });
   }
 };

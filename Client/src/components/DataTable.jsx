@@ -2,7 +2,7 @@ import React from "react";
 import { formatDate, formatPrice } from "../utils/format";
 import { Eye } from "lucide-react";
 
-const DataTable = ({ data }) => {
+const DataTable = ({ data, show, setShow, setId }) => {
   return (
     <>
       {data.map((transaction) => (
@@ -33,7 +33,13 @@ const DataTable = ({ data }) => {
             </span>
           </td>
           <td className="px-6 py-4 text-center">
-            <button className="inline-flex items-center gap-2 bg-blue-50 text-blue-600 hover:bg-blue-100 px-4 py-2 rounded-lg transition-all duration-200 font-medium">
+            <button
+              onClick={() => {
+                setShow(!show);
+                setId(transaction.id);
+              }}
+              className="inline-flex items-center gap-2 bg-blue-50 text-blue-600 hover:bg-blue-100 px-4 py-2 rounded-lg transition-all duration-200 font-medium"
+            >
               <Eye size={16} />
               Lihat
             </button>

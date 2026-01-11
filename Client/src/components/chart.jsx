@@ -28,8 +28,8 @@ export function Chart({ dataChart }) {
     },
   };
 
-  const labels = dataChart.map(
-    (item) => item.tanggal.split("T")[0].split("-")[2]
+  const labels = dataChart.map((item) =>
+    Number(item.tanggal.split("T")[0].split("-")[2])
   );
 
   const data = {

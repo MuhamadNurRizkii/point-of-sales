@@ -25,4 +25,13 @@ const getTransactionsAPI = async (page, limit, token) => {
   });
 };
 
-export { createTrasactionAPI, getTransactionsAPI };
+const getDetailTransactionAPI = async (id, token) => {
+  return await fetch(`${url}/dashboard/transactions/detail/${id}`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+};
+
+export { createTrasactionAPI, getTransactionsAPI, getDetailTransactionAPI };
