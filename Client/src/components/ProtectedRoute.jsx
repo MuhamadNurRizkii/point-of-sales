@@ -5,7 +5,6 @@ import { getToken, parsingToken } from "../utils/token";
 const ProtectedRoute = ({ allowedRoles, children }) => {
   const token = getToken();
   const user = parsingToken(token);
-  console.log(user);
 
   if (!token && user === null) {
     return <Navigate to={"/login"} replace />;

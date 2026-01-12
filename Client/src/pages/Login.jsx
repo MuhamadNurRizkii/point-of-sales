@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router";
 import { Eye, EyeOff, Mail, Lock, ArrowRight } from "lucide-react";
 import { loginAPI } from "../api/public";
 import toast from "react-hot-toast";
 import { saveToken } from "../utils/token";
+import { jwtDecode } from "jwt-decode";
 
 function Login() {
   const [formData, setFormData] = useState({
@@ -16,6 +17,28 @@ function Login() {
   const [isLoading, setIsLoading] = useState(false);
 
   const navigate = useNavigate();
+
+  // Cek token ketika komponen pertama kali dirender
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    if (token) {
+      try {
+        const decoded = jwtDecode(token);
+        const now = Date.now() / 1000;
+
+        if (decoded.exp && decoded.exp > now) {
+          // token masih berlaku -> langsung ke dashboard
+          navigate("/dashboard");
+        } else {
+          // token kadaluwarsa -> hapus
+          localStorage.removeItem("token");
+        }
+      } catch (error) {
+        console.error("Token invalid:", error);
+        localStorage.removeItem("token");
+      }
+    }
+  }, [navigate]);
 
   const validateForm = () => {
     const newErrors = {};

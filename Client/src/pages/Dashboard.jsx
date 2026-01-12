@@ -2,7 +2,7 @@ import React from "react";
 import { ShoppingBag, TrendingUp, Package, DollarSign } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "react-hot-toast";
-import { getToken } from "../utils/token";
+import { getToken, parsingToken } from "../utils/token";
 import { getDatadashboard } from "../api/dashboard";
 import { formatPrice } from "../utils/format";
 import DataTable from "../components/DataTable";
