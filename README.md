@@ -10,7 +10,7 @@ Project **Fullstack Point of Sales (POS)** adalah aplikasi untuk mengelola prose
 
 * Register & Login user
 * JSON Web Token (JWT)
-* Proteksi route (role-based jika diperlukan)
+* Proteksi route 
 
 ### 📦 Manajemen Produk
 
